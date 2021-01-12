@@ -1,0 +1,10 @@
+{
+"game" : "Nav: Bounce",
+"field-image" : "NavBounce.png",
+"field-corners": {
+	"top-left" : [1, 1],
+	"bottom-right" : [1023, 511]
+},
+"field-size" : [30, 15],
+"field-unit" : "foot"
+}
