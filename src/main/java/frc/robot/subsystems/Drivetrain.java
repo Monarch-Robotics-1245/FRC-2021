@@ -1,133 +1,134 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PWMVictorSPX;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
-import frc.robot.MotorControlPID;
 import frc.robot.commands.DriveTank;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-/**
- * This code is for the subsystem drivetrain, includes 4 motors.
- */
+import edu.wpi.first.wpilibj.*;
+
 public class Drivetrain extends SubsystemBase {
+  // The groups of motors for each side of the drivetrain.
+  private final SpeedControllerGroup leftMotors =
+      new SpeedControllerGroup(new WPI_VictorSPX(Constants.getLeftWheelPort1()), new WPI_VictorSPX(Constants.getLeftWheelPort2()));
+  private final SpeedControllerGroup rightMotors =
+      new SpeedControllerGroup(new WPI_VictorSPX(Constants.getRightWheelPort1()), new WPI_VictorSPX(Constants.getRightWheelPort2()));
 
-    public VictorSPX left1, left2, right1, right2;
-    private Encoder encoderLeft = new Encoder(0,1);
-    private Encoder encoderRight = new Encoder(2, 3);
-    private ADXRS450_Gyro gyro;
-    private DigitalInput autoSwitch = new DigitalInput(9);
+  private final DifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);
 
-    private LidarLite lidar = new LidarLite(I2C.Port.kOnboard);
+  // Creates encoders for each side of the drivetrain.
+  private final Encoder leftEncoder = new Encoder(0,1);
+  private final Encoder rightEncoder = new Encoder(2, 3);
 
-    /**
-     * 
-     * @param left1 Left motor port 1.
-     * @param left2 Left motor port 2.
-     * @param right1 Right motor port 1.
-     * @param right2 Right motor port 2.
-     */
-    public Drivetrain(int left1, int left2, int right1, int right2) {
-        //Initialises each of the 4 motors for both sides of the drivetrain.
-        this.left1 = new VictorSPX(left1);
-        this.left2 = new VictorSPX(left2);
-        this.right1 = new VictorSPX(right1);
-        this.right2 = new VictorSPX(right2);
+  // The gyro sensor
+  private final ADXRS450_Gyro gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+  private DigitalInput autoSwitch = new DigitalInput(9);
 
-        //Enables break mode for all of our motors so it doesn't destroy itself.
-        this.left2.setNeutralMode(NeutralMode.Brake);
-        this.left1.setNeutralMode(NeutralMode.Brake);
-        this.right2.setNeutralMode(NeutralMode.Brake);
-        this.right1.setNeutralMode(NeutralMode.Brake);
+  // Odometry class for tracking robot position
+  private final DifferentialDriveOdometry odometry;
 
-        //link the command to the subsystem
-        setDefaultCommand(new DriveTank(this));
-        gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+  // Creates a new DriveSubsystem.
+  public Drivetrain() {
+    // Sets the distance per pulse for the encoders
+    leftEncoder.setDistancePerPulse(7.5*Math.PI/2048.0);
+    rightEncoder.setDistancePerPulse(7.5*Math.PI/2048.0);
 
-        gyro.calibrate();
+    resetEncoders();
+    odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+    //link the command to the subsystem
+    setDefaultCommand(new DriveTank(this));
+  }
 
+  @Override
+  public void periodic() {
+    // Update the odometry in the periodic block
+    odometry.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
+  }
 
-        //set up the distance to pulse ratio for each of the two encoders.
-        encoderLeft.setDistancePerPulse(7.5*Math.PI/2048.0);//this should be 1 rotation, eventually will be converted to inches
-        encoderRight.setDistancePerPulse(7.5*Math.PI/2048.0);//this should be 1 rotation, eventually will be converted to inches
-    }
+  // Returns the currently-estimated pose of the robot.
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
 
+  // Returns the current wheel speeds of the robot.
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
+  }
 
-    public void initializeLidar()
-    {
-        lidar.startMeasuring();
-    }
+  // Resets the odometry to the specified pose.
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    odometry.resetPosition(pose, gyro.getRotation2d());
+  }
 
-    /**
-     *
-     * @param speed Speed input from joysticks.
-     * @return The speed adjusted using a sine curve.
-     */
-    private double speedRamp(double speed)
-    {
-        //return speed;
+  // Controls the left and right sides of the drive directly with voltages.
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    leftMotors.setVoltage(leftVolts);
+    rightMotors.setVoltage(-rightVolts);
+    drive.feed();
+  }
 
-        double speedPrime;
+  public void tankDrive(double left, double right){
+    tankDriveVolts(RobotController.getBatteryVoltage() * left, RobotController.getBatteryVoltage() * right);
+  }
 
-        speedPrime = Math.sin(Math.PI/2*speed);
-        return speedPrime;
-    }
+  // Resets the drive encoders to currently read a position of 0.
+  public void resetEncoders() {
+    leftEncoder.reset();
+    rightEncoder.reset();
+  }
 
+  // Gets the average distance of the two encoders.
+  public double getAverageEncoderDistance() {
+    return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2.0;
+  }
 
-    public void rdrive(double speed){
-        // Sets the right motors speed output.
-        right1.set(ControlMode.PercentOutput, -speedRamp(speed));
-        right2.set(ControlMode.PercentOutput, -speedRamp(speed));
-    }
-    public void ldrive(double speed){
-        // Sets the left motors speed output.
-        left1.set(ControlMode.PercentOutput, speedRamp(speed));
-        left2.set(ControlMode.PercentOutput, speedRamp(speed));
-    }
+  // Gets the left drive encoder.
+  public Encoder getLeftEncoder() {
+    return leftEncoder;
+  }
 
-    /**
-     * @return The lidar measurement in inches
-     */
+  // Gets the right drive encoder.
+  public Encoder getRightEncoder() {
+    return rightEncoder;
+  }
 
-    public double getLidarMeasurement() {
+  //gets the switch
+  public DigitalInput getAutoSwitch() {
+    return autoSwitch;
+  }
 
-        return lidar.getDistance() / 2.54 - 5;
-    }
+  public ADXRS450_Gyro getGyro() {
+    return gyro;
+}
 
-    //returns the left encoder (in ports 2 and 3)
-    public Encoder getEncoderLeft() {return encoderLeft;}
+  // Sets the max output of the drive.  Useful for scaling the drive to drive more slowly.
+  public void setMaxOutput(double maxOutput) {
+    drive.setMaxOutput(maxOutput);
+  }
 
-    //returns the right encoder (in ports 0 and 1)
-    public Encoder getEncoderRight() {
-        return encoderRight;
-    }
+  // Zeroes the heading of the robot.
+  public void zeroHeading() {
+    gyro.reset();
+  }
 
-    public ADXRS450_Gyro getGyro() {
-        return gyro;
-    }
+  // Returns the heading of the robot.
+  public double getHeading() {
+    return gyro.getRotation2d().getDegrees();
+  }
 
-    public boolean gyroConnected(){
-        return gyro.isConnected();
-    }
-
-    public DigitalInput getAutoSwitch() {
-        return autoSwitch;
-    }
-
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run, doesn't do anything at the moment
-    }
+  // Returns the turn rate of the robot.
+  public double getTurnRate() {
+    return -gyro.getRate();
+  }
 }

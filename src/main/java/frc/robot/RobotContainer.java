@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import frc.robot.commands.*;
-import frc.robot.commands.auto.AutoGroup;
-import frc.robot.commands.auto.AutoGroupFinal;
 import frc.robot.commands.auto.TrajectoryTest;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,22 +23,18 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private Drivetrain drivetrain;
-  private DriveTank driveTank;
-
-  // private final Drivetrain drivetrain = new Drivetrain(Constants.getLeftWheelPort1(), Constants.getLeftWheelPort2(), Constants.getRightWheelPort1(), Constants.getRightWheelPort2());
   private final WheelManipulator wheelManipulator = new WheelManipulator(Constants.getWheelOfFortunePort()); //change back to constant spinnerPort
   private final Turret turret = new Turret(Constants.getShooterPort1(), Constants.getShooterPort2(),Constants.getShooterInputPort());
   private final PullUp pullup = new PullUp(Constants.getOpenChannel(),Constants.getCloseChannel());
   private final BallSuck ballsuck = new BallSuck(Constants.getBallIntake(), Constants.getInternalManipulation(), Constants.getintakeRelease(), Constants.getpulseTimer());
-  private final TrajectoryDrivetrain trajectoryDrivetrain = new TrajectoryDrivetrain();
+  private final Drivetrain drivetrain = new Drivetrain();
 
-  // private final DriveTank driveTank = new DriveTank(drivetrain);
+  private final DriveTank driveTank = new DriveTank(drivetrain);
   // private final Shoot shooter = new Shoot(turret);
   private final Climb climb = new Climb(pullup);
   private final BallIntake ballintake = new BallIntake(ballsuck);
 
-  private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, trajectoryDrivetrain, ballsuck);
+  private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);
   //  private final AutoGroup autoCommand = new AutoGroup(turret, drivetrain, ballsuck);
   //  private final AutoGroupFinal autoCommandFinal = new AutoGroupFinal(turret,drivetrain,ballsuck);

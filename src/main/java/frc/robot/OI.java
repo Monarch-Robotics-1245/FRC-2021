@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.commands.auto.SpinToPort;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.OldDrivetrain;
 
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -49,7 +50,7 @@ public class OI {
 
         // Activates the auto turn
         leftButton6 = new JoystickButton(leftJoystick, 6);
-        // leftButton6.whenPressed(new SpinToPort(drivetrain));
+        leftButton6.whenPressed(new SpinToPort(drivetrain));
 
         // Test turn to a certain attitude
         leftButton7 = new JoystickButton(leftJoystick, 7);

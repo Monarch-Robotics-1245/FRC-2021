@@ -14,17 +14,17 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.subsystems.BallSuck;
+import frc.robot.subsystems.OldDrivetrain;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.TrajectoryDrivetrain;
 import frc.robot.subsystems.Turret;
 
 public class TrajectoryTest extends SequentialCommandGroup {
     /**
      * @param turret The Turret Subsystem {@link Turret} so that we can shoot balls
      * @param ballsuck The BallSuck Subsystem {@link BallSuck} so that we can SUCC balls
-     * @param drivetrain The Drivetrain Subsystem {@link Drivetrain} so that we can drive!
+     * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
-    public TrajectoryTest(Turret turret, TrajectoryDrivetrain drivetrain, BallSuck ballsuck){
+    public TrajectoryTest(Turret turret, Drivetrain drivetrain, BallSuck ballsuck){
         
             // Create a voltage constraint to ensure we don't accelerate too fast
         DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
