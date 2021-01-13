@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
@@ -10,48 +11,51 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
 import edu.wpi.first.wpilibj.*;
 
 public class TrajectoryDrivetrain extends SubsystemBase {
   // The motors on the left side of the drive.
-  private final SpeedControllerGroup m_leftMotors =
-      new SpeedControllerGroup(new PWMVictorSPX(Constants.getLeftWheelPort1()), new PWMVictorSPX(Constants.getLeftWheelPort2()));
+  private final SpeedControllerGroup leftMotors =
+      new SpeedControllerGroup(new WPI_VictorSPX(Constants.getLeftWheelPort1()), new WPI_VictorSPX(Constants.getLeftWheelPort2()));
 
   // The motors on the right side of the drive.
-  private final SpeedControllerGroup m_rightMotors =
-      new SpeedControllerGroup(new PWMVictorSPX(Constants.getRightWheelPort1()), new PWMVictorSPX(Constants.getRightWheelPort2()));
+  private final SpeedControllerGroup rightMotors =
+      new SpeedControllerGroup(new WPI_VictorSPX(Constants.getRightWheelPort1()), new WPI_VictorSPX(Constants.getRightWheelPort2()));
 
   // The robot's drive
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+  private final DifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);
 
   // The left-side drive encoder
-  private final Encoder m_leftEncoder = new Encoder(0,1);
+  private final Encoder leftEncoder = new Encoder(0,1);
 
   // The right-side drive encoder
-  private final Encoder m_rightEncoder = new Encoder(2, 3);
+  private final Encoder rightEncoder = new Encoder(2, 3);
 
   // The gyro sensor
-  private final Gyro m_gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+  private final Gyro gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
 
   // Odometry class for tracking robot pose
-  private final DifferentialDriveOdometry m_odometry;
+  private final DifferentialDriveOdometry odometry;
 
   /**
    * Creates a new DriveSubsystem.
    */
   public TrajectoryDrivetrain() {
     // Sets the distance per pulse for the encoders
-    m_leftEncoder.setDistancePerPulse(7.5*Math.PI/2048.0);
-    m_rightEncoder.setDistancePerPulse(7.5*Math.PI/2048.0);
+    leftEncoder.setDistancePerPulse(7.5*Math.PI/2048.0);
+    rightEncoder.setDistancePerPulse(7.5*Math.PI/2048.0);
 
     resetEncoders();
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+    odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
   }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    odometry.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
   }
 
   /**
@@ -60,7 +64,7 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return odometry.getPoseMeters();
   }
 
   /**
@@ -69,7 +73,7 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+    return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
   }
 
   /**
@@ -79,7 +83,7 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+    odometry.resetPosition(pose, gyro.getRotation2d());
   }
 
   /**
@@ -89,7 +93,7 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @param rot the commanded rotation
    */
   public void arcadeDrive(double fwd, double rot) {
-    m_drive.arcadeDrive(fwd, rot);
+    drive.arcadeDrive(fwd, rot);
   }
 
   /**
@@ -99,17 +103,17 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @param rightVolts the commanded right output
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    m_leftMotors.setVoltage(leftVolts);
-    m_rightMotors.setVoltage(-rightVolts);
-    m_drive.feed();
+    leftMotors.setVoltage(leftVolts);
+    rightMotors.setVoltage(-rightVolts);
+    drive.feed();
   }
 
   /**
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
-    m_leftEncoder.reset();
-    m_rightEncoder.reset();
+    leftEncoder.reset();
+    rightEncoder.reset();
   }
 
   /**
@@ -118,7 +122,7 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @return the average of the two encoder readings
    */
   public double getAverageEncoderDistance() {
-    return (m_leftEncoder.getDistance() + m_rightEncoder.getDistance()) / 2.0;
+    return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2.0;
   }
 
   /**
@@ -127,7 +131,7 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @return the left drive encoder
    */
   public Encoder getLeftEncoder() {
-    return m_leftEncoder;
+    return leftEncoder;
   }
 
   /**
@@ -136,7 +140,7 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @return the right drive encoder
    */
   public Encoder getRightEncoder() {
-    return m_rightEncoder;
+    return rightEncoder;
   }
 
   /**
@@ -145,14 +149,14 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @param maxOutput the maximum output to which the drive will be constrained
    */
   public void setMaxOutput(double maxOutput) {
-    m_drive.setMaxOutput(maxOutput);
+    drive.setMaxOutput(maxOutput);
   }
 
   /**
    * Zeroes the heading of the robot.
    */
   public void zeroHeading() {
-    m_gyro.reset();
+    gyro.reset();
   }
 
   /**
@@ -161,7 +165,7 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return m_gyro.getRotation2d().getDegrees();
+    return gyro.getRotation2d().getDegrees();
   }
 
   /**
@@ -170,6 +174,6 @@ public class TrajectoryDrivetrain extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return -m_gyro.getRate();
+    return -gyro.getRate();
   }
 }
