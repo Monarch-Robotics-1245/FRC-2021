@@ -6,8 +6,6 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-
-import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.OI;
 import frc.robot.subsystems.PullUp;
 

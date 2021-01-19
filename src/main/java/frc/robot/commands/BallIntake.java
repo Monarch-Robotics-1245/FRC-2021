@@ -12,9 +12,6 @@ import frc.robot.subsystems.BallSuck;
 
 
 import frc.robot.OI;
-
-
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 

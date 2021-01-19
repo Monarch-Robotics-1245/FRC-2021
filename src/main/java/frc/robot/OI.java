@@ -2,7 +2,6 @@ package frc.robot;
 
 import frc.robot.commands.auto.SpinToPort;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.OldDrivetrain;
 
 import edu.wpi.first.wpilibj.XboxController;
 
