@@ -35,11 +35,6 @@ public class DriveTank extends CommandBase {
 
     }
 
-    /** 
-     * Initialises the encoders and the gyro
-     * Also resets the timer
-     * Adds the next "end turn" value for the rest of the class to execute a turn to that degree
-     */
     @Override
     public void initialize() {
         // drivetrain.getGyro().reset();
@@ -47,7 +42,6 @@ public class DriveTank extends CommandBase {
 
     
     /**
-     * When the left button 7 is pressed turnes to the predefined angle relative to the initialised value
      * Drives with speeds based off the 2 joysticks
      */
     @Override

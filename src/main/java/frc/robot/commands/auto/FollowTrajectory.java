@@ -15,7 +15,8 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 public class FollowTrajectory extends RamseteCommand  {
-   
+
+    Drivetrain drivetrain;
 
     public FollowTrajectory(Trajectory trajectory, Drivetrain trajectoryDrive) {
         super(
@@ -31,5 +32,13 @@ public class FollowTrajectory extends RamseteCommand  {
             trajectoryDrive::tankDriveVolts,
             trajectoryDrive
         );
+        drivetrain = trajectoryDrive;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        super.end(interrupted);
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        drivetrain.tankDriveVolts(0.0, 0.0);
     }
 }
