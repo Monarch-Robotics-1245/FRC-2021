@@ -1,5 +1,11 @@
 package frc.robot.commands.auto;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -7,10 +13,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.MotorControlPID;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.Target;
 import frc.robot.subsystems.Drivetrain;
 
 
 public class SpinToPort extends CommandBase {
+    private final NetworkTable nt;
+    private double[] x_pos, y_pos, area;
+
     private final Drivetrain drivetrain;
     private double spinSpeed;
     private MotorControlPID spinControl;
@@ -20,10 +30,13 @@ public class SpinToPort extends CommandBase {
     private Timer timer;
 
     public SpinToPort(Drivetrain drivetrain) {
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        nt = inst.getTable("vision");
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
         isFinished = false;
         timer = new Timer();
+        inst.startClientTeam(1245);
     }
 
     /**
@@ -52,6 +65,39 @@ public class SpinToPort extends CommandBase {
         {
             isFinished = true;
         }
+        double[] area = nt.getEntry("area").getDoubleArray(new double[0]);
+        double[] x_pos = nt.getEntry("x_pos").getDoubleArray(new double[0]);
+        double[] y_pos = nt.getEntry("y_pos").getDoubleArray(new double[0]);
+        Target[] targets = new Target[area.length];
+        for(int i = 0; i<area.length; i++){
+            targets[i] = new Target(x_pos[i],y_pos[i],area[i]);
+        }
+        if(targets.length==0){
+            return;
+        }
+        else if(targets.length>1){
+            Arrays.sort(targets, new SortTarget());
+        }
+        
+        double x = targets[0].x;
+        if(x>0.5){
+            x = 0.5;
+        }
+        else if(x<-0.5){
+            x = -0.5;
+        }
+        else if(x>0 && x<0.1){
+            x = 0.1;
+        }
+        else if(x<0 && x>-0.1){
+            x = -0.1;
+        }
+        drivetrain.tankDrive(-x, x);
+        if(Math.abs(x)<0.02){
+            isFinished = true;
+        }
+
+        
 //         // spinSpeed = - 0.25;
 //         double spinSpeedLeft;
 //         double spinSpeedRight;
@@ -146,5 +192,20 @@ public class SpinToPort extends CommandBase {
         drivetrain.tankDriveVolts(0, 0);
         System.out.println("DONE WITH ALIGN");
         Robot.canShootAuto = true;
+    }
+}
+
+class SortTarget implements Comparator<Target>
+{
+    // Sorts targets by area (largest is at index 0)
+    public int compare(Target a, Target b)
+    {
+        if(a.area == b.area){
+            return 0;
+        }
+        if(a.area - b.area>0){
+            return -1;
+        }
+        return 1;
     }
 }
