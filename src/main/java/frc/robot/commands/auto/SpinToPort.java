@@ -79,12 +79,15 @@ public class SpinToPort extends CommandBase {
             Arrays.sort(targets, new SortTarget());
         }
         
+        // gets the x coordinate of the target with the largest area.
+        // a number between -1 and 1, where 0 is the center.
         double x = targets[0].x;
-        if(x>0.5){
-            x = 0.5;
+
+        if(x>0.3){
+            x = 0.3;
         }
-        else if(x<-0.5){
-            x = -0.5;
+        else if(x<-0.3){
+            x = -0.3;
         }
         else if(x>0 && x<0.1){
             x = 0.1;
