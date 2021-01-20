@@ -290,7 +290,7 @@ if __name__ == "__main__":
             # cv2.circle(output_img, center=center, radius=3, color=(0, 0, 255), thickness=-1)
 
             x_list.append((center[0] - width / 2) / (width / 2))
-            y_list.append((center[1] - height / 2) / (height / 2))
+            x_list.append((center[1] - width / 2) / (width / 2))
             area_list.append(area)
 
         print("UPDATING NETWORK TABLES")
