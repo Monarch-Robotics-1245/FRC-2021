@@ -38,8 +38,9 @@ public class Robot extends TimedRobot {
 
   private WheelManipulator wheelManipulator;
   private OI oi;
-  private boolean cameraExposureAuto = false;
-  private UsbCamera camera, intakeCamera;
+  private NetworkTable nt;
+  private boolean cvExposureAuto;
+  private UsbCamera intakeCamera;
 
 
   public static double[] position = new double[2];
@@ -49,6 +50,7 @@ public class Robot extends TimedRobot {
   private static double[] distanceBetweenChange = new double[2];
 
   public static boolean canShootAuto = true;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -60,19 +62,18 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     oi = new OI(m_robotContainer.getDrivetrain());
 
-    camera = CameraServer.getInstance().startAutomaticCapture(0);
-    camera.setResolution(320, 240);
-    intakeCamera = CameraServer.getInstance().startAutomaticCapture(1);
+    intakeCamera = CameraServer.getInstance().startAutomaticCapture("Intake View", 0);
     intakeCamera.setResolution(320, 240);
     intakeCamera.setExposureAuto();
-    // VideoCapture cameraOpencv = new VideoCapture(0);
-    // Mat frame = new Mat();
-    // cameraOpencv.read(frame);
-    // camera.setBrightness(4);
-    camera.setBrightness(100);
-    camera.setExposureManual(10);
+
+
+    cvExposureAuto = false;
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    nt = inst.getTable("vision");
+
     Arrays.fill(previousXCoordValues, -1);
     Arrays.fill(distanceBetweenChange,0);
+
     canShootAuto = true;
   }
 
@@ -92,18 +93,11 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().run();
 
-    // if(OI.leftJoystick.getRawButtonPressed(8)){
-    //   if(!cameraExposureAuto){
-    //     camera.setExposureAuto();
-    //     camera.setBrightness(50);
-    //     cameraExposureAuto = true;
-    //   }
-    //   else{
-    //     camera.setExposureManual(1);
-    //     camera.setBrightness(100);
-    //     cameraExposureAuto = false;
-    //   }
-    // }
+    if(OI.leftJoystick.getRawButtonPressed(8)){
+      cvExposureAuto = !cvExposureAuto;
+      nt.getEntry("exposure_auto").setBoolean(cvExposureAuto);
+      //update NetworkTable with value
+    }
     
     // getCoordinates();
     //kyle rocks

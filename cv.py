@@ -278,7 +278,7 @@ if __name__ == "__main__":
             if area < 15:
                 continue
 
-            cv2.drawContours(output_img, contour, -1, color=(255, 255, 255), thickness=-1)
+            # cv2.drawContours(output_img, contour, -1, color=(255, 255, 255), thickness=-1)
 
             rect = cv2.minAreaRect(contour)
             center, size, angle = rect
