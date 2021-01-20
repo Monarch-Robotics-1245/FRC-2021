@@ -248,11 +248,11 @@ if __name__ == "__main__":
 
     input_img = np.zeros(shape=(480, 640, 3), dtype=np.uint8)
 
+    print("Doing computer vision things")
+
     # loop forever
     while True:
         start_time = time.time()
-
-        print("Grabbing frame")
         frame_time, input_img = input_stream.grabFrame(input_img)
         output_img = np.copy(input_img)
 
@@ -261,7 +261,6 @@ if __name__ == "__main__":
             output_stream.notifyError(input_stream.getError())
             continue
 
-        print("Doing COMPUTER VISION STUFF")
         # Convert to HSV and threshold image
         hsv_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2HSV)
         binary_img = cv2.inRange(hsv_img, (65, 65, 200), (85, 255, 255))
@@ -293,13 +292,11 @@ if __name__ == "__main__":
             y_list.append((center[1] - height / 2) / (height / 2))
             area_list.append(area)
 
-        print("UPDATING NETWORK TABLES")
 
         vision_nt.putNumberArray('x_pos', x_list)
         vision_nt.putNumberArray('y_pos', y_list)
         vision_nt.putNumberArray('area', area_list)
 
-        print("UPLOADING TO OUTPUT STREAM")
         processing_time = time.time() - start_time
         fps = 1 / processing_time
         cv2.putText(output_img, str(round(fps, 1)), (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
