@@ -42,19 +42,19 @@ public class TrajectoryTest extends SequentialCommandGroup {
         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, new Rotation2d(0)),
             List.of(
-                new Translation2d(1, 1),
-                new Translation2d(2, -1)
+                new Translation2d(4, 2)
+                // new Translation2d(10, 0)
             ),
-            new Pose2d(3, 0, new Rotation2d(0)),
+            new Pose2d(6, 2, new Rotation2d(0)),
             config
         );
-        drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+        // drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
 
-        addCommands(new FollowTrajectory(exampleTrajectory, drivetrain));
+        // addCommands(new FollowTrajectory(exampleTrajectory, drivetrain));
 
 
         //Using a simple path generated in Pathweaver:
-        /* String testJson = "paths/Test.wpilib.json";
+        String testJson = "paths/Barell.wpilib.json";
         Trajectory testTrajectory = new Trajectory();
         try {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(testJson);
@@ -63,7 +63,29 @@ public class TrajectoryTest extends SequentialCommandGroup {
             DriverStation.reportError("Unable to open trajectory: " + testJson, ex.getStackTrace());
         }
         drivetrain.resetOdometry(testTrajectory.getInitialPose());
-        addCommands(new FollowTrajectory(testTrajectory, drivetrain)); */
+        addCommands(new FollowTrajectory(testTrajectory, drivetrain));
+
+        String barell2Json = "paths/Barell2.wpilib.json";
+        Trajectory barell2Trajectory = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(barell2Json);
+            barell2Trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        } catch (IOException ex) {
+            DriverStation.reportError("Unable to open trajectory: " + testJson, ex.getStackTrace());
+        }
+        drivetrain.resetOdometry(barell2Trajectory.getInitialPose());
+        addCommands(new FollowTrajectory(barell2Trajectory, drivetrain));
+        
+        String barell3Json = "paths/Barell3.wpilib.json";
+        Trajectory barell3Trajectory = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(barell3Json);
+            barell3Trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        } catch (IOException ex) {
+            DriverStation.reportError("Unable to open trajectory: " + testJson, ex.getStackTrace());
+        }
+        drivetrain.resetOdometry(barell3Trajectory.getInitialPose());
+        // addCommands(new FollowTrajectory(barell3Trajectory, drivetrain));
         
         //The barell path generated in Pathweaver:
         /* String barellJson = "paths/Test.wpilib.json";

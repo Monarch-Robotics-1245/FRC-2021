@@ -56,7 +56,8 @@ public class DriveTank extends CommandBase {
         // System.out.println(drivetrain.getLeftEncoder().getRate());
         // System.out.println("R:");
         // System.out.println(drivetrain.getRightEncoder().getRate());
-        System.out.println("GYRO: "+drivetrain.getGyro().getAngle());
+        // System.out.println("GYRO: "+drivetrain.getGyro().getAngle());
+        // System.out.println(drivetrain.getPose());
         // System.out.println("R:"+drivetrain.getRightEncoder().getRate().toString());
     }
 

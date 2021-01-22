@@ -11,6 +11,7 @@ import frc.robot.subsystems.Drivetrain;
 public class FollowTrajectory extends RamseteCommand  {
 
     Drivetrain drivetrain;
+    Trajectory trajectory;
 
     public FollowTrajectory(Trajectory trajectory, Drivetrain trajectoryDrive) {
         super(
@@ -27,11 +28,46 @@ public class FollowTrajectory extends RamseteCommand  {
             trajectoryDrive
         );
         drivetrain = trajectoryDrive;
+        this.trajectory = trajectory;
+    }
+
+    @Override 
+    public void initialize(){
+        super.initialize();
+        drivetrain.resetOdometry(trajectory.getInitialPose());
+    }
+
+    @Override
+    public void execute() {
+        super.execute();
+        System.out.println(drivetrain.getPose());
     }
 
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
+        System.out.println("FINISHED FOLLOWING TRAJECTORY");
         System.out.println("FINISHED FOLLOWING TRAJECTORY");
         drivetrain.tankDriveVolts(0.0, 0.0);
     }
