@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 //Set all ports here
 public final class Constants {
 
-    //SET BEFORE TESTING TRAJECTORY CODE
+    //TODO: Make sure the right options were used when calculating the constants.
     public static double kMaxSpeedMetersPerSecond = 2;
     public static double kMaxAccelerationMetersPerSecondSquared = 1;
     public static final double kRamseteB = 2;
@@ -33,7 +33,7 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 2.56;
     public static final double kaVoltSecondsSquaredPerMeter = 0.0155;
     public static final double kTrackwidthMeters = 1.10408;
-    public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+    public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
     public static final double kPDriveVel = 0.0738;
     
     // Ports

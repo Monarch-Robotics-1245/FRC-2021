@@ -38,8 +38,8 @@ public class Drivetrain extends SubsystemBase {
   // Creates a new DriveSubsystem.
   public Drivetrain() {
     // Sets the distance per pulse for the encoders
-    leftEncoder.setDistancePerPulse(7.5*Math.PI/2048.0);
-    rightEncoder.setDistancePerPulse(7.5*Math.PI/2048.0);
+    leftEncoder.setDistancePerPulse(0.1905*Math.PI/2048.0);
+    rightEncoder.setDistancePerPulse(0.1905*Math.PI/2048.0);
 
     resetEncoders();
     odometry = new DifferentialDriveOdometry(gyro.getRotation2d());

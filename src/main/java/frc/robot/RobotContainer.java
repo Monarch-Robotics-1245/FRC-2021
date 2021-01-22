@@ -33,7 +33,7 @@ public class RobotContainer {
   private final Climb climb = new Climb(pullup);
   private final BallIntake ballintake = new BallIntake(ballsuck);
 
-  // private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
+  private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);
   //  private final AutoGroup autoCommand = new AutoGroup(turret, drivetrain, ballsuck);
   //  private final AutoGroupFinal autoCommandFinal = new AutoGroupFinal(turret,drivetrain,ballsuck);
@@ -77,7 +77,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     // return autoCommand;
-    return driveTank;
-  //  return autoTrajectoryTest;
+    // return driveTank;
+    return autoTrajectoryTest;
   }
 }
