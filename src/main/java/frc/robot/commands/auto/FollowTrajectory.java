@@ -49,26 +49,6 @@ public class FollowTrajectory extends RamseteCommand  {
         System.out.println("FINISHED FOLLOWING TRAJECTORY");
         System.out.println("FINISHED FOLLOWING TRAJECTORY");
         System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
-        System.out.println("FINISHED FOLLOWING TRAJECTORY");
         drivetrain.tankDriveVolts(0.0, 0.0);
     }
 }

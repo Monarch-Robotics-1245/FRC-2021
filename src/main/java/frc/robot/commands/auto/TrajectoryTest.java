@@ -48,7 +48,6 @@ public class TrajectoryTest extends SequentialCommandGroup {
             new Pose2d(6, 2, new Rotation2d(0)),
             config
         );
-        // drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
 
         // addCommands(new FollowTrajectory(exampleTrajectory, drivetrain));
 
@@ -62,7 +61,6 @@ public class TrajectoryTest extends SequentialCommandGroup {
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + testJson, ex.getStackTrace());
         }
-        drivetrain.resetOdometry(testTrajectory.getInitialPose());
         addCommands(new FollowTrajectory(testTrajectory, drivetrain));
 
         String barell2Json = "paths/Barell2.wpilib.json";
@@ -73,7 +71,6 @@ public class TrajectoryTest extends SequentialCommandGroup {
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + testJson, ex.getStackTrace());
         }
-        drivetrain.resetOdometry(barell2Trajectory.getInitialPose());
         addCommands(new FollowTrajectory(barell2Trajectory, drivetrain));
         
         String barell3Json = "paths/Barell3.wpilib.json";
@@ -84,7 +81,6 @@ public class TrajectoryTest extends SequentialCommandGroup {
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + testJson, ex.getStackTrace());
         }
-        drivetrain.resetOdometry(barell3Trajectory.getInitialPose());
         // addCommands(new FollowTrajectory(barell3Trajectory, drivetrain));
         
         //The barell path generated in Pathweaver:

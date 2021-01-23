@@ -88,7 +88,7 @@ public class Shoot extends CommandBase {
 
             //Test timer stuff
             // double startTime = timer.getMatchTime();
-            double leftSpeed = motorControl.getSpeed(turret.getEncoderLeftRate());
+            double leftSpeed = motorControl.getSpeed(turret.getEncoderRate());
             // double elapseTime = timer.getMatchTime() - startTime;
 
             // System.out.println("PID elapse time: " + elapseTime);
@@ -97,7 +97,7 @@ public class Shoot extends CommandBase {
             turret.spinMotors(leftSpeed,leftSpeed);
             // turret.spinMotors(0.47,0.47);
             SmartDashboard.putNumber("Left Speed", leftSpeed);
-            SmartDashboard.putNumber("Left RPS", turret.getEncoderLeftRate());
+            SmartDashboard.putNumber("Left RPS", turret.getEncoderRate());
 
             // System.out.println("RPM:"+turret.getEncoderLeftRate());
 
