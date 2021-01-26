@@ -61,7 +61,6 @@ public class Robot extends TimedRobot {
 
     intakeCamera = CameraServer.getInstance().startAutomaticCapture("Intake View", 0);
     intakeCamera.setResolution(320, 240);
-    intakeCamera.setExposureAuto();
 
 
     cvExposureAuto = false;

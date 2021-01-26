@@ -293,13 +293,13 @@ if __name__ == "__main__":
             cv2.drawContours(output_img, [contour], -1, (212, 0, 255), 5)
             cv2.circle(output_img, center=tuple(center), radius=4, color=(0, 0, 255), thickness=-1)
 
-            width = size[0]
+            target_width = size[0]
 
             x_list.append((center[0] - width / 2) / (width / 2))
             y_list.append((center[1] - height / 2) / (height / 2))
             area_list.append(area)
-            width_list.append(width)
-            distance.append(8.25 * focal / width)
+            width_list.append(target_width)
+            distance.append(8.25 * focal / target_width)
 
 
         vision_nt.putNumberArray('x_pos', x_list)
