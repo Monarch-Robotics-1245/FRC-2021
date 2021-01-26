@@ -250,6 +250,8 @@ if __name__ == "__main__":
 
     print("Doing computer vision things")
 
+    focal = 60 * 94 / 8.25
+
     # loop forever
     while True:
         start_time = time.time()
@@ -263,19 +265,21 @@ if __name__ == "__main__":
 
         # Convert to HSV and threshold image
         hsv_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2HSV)
-        binary_img = cv2.inRange(hsv_img, (65, 65, 200), (85, 255, 255))
+        binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
 
         _, contour_list, _ = cv2.findContours(binary_img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
 
         x_list = []
         y_list = []
         area_list = []
+        width_list = []
+        distance = []
 
         for contour in contour_list:
 
             area = cv2.contourArea(contour)
             # Ignore small contours that could be because of noise/bad thresholding
-            if area < 15:
+            if area < 1:
                 continue
 
             # cv2.drawContours(output_img, contour, -1, color=(255, 255, 255), thickness=-1)
@@ -285,19 +289,29 @@ if __name__ == "__main__":
             center = [int(dim) for dim in center]  # Convert to int so we can draw
 
             # Draw rectangle and circle
-            # cv2.drawContours(output_img, np.int0(cv2.boxPoints(rect)), -1, color=(0, 0, 255), thickness=2)
-            # cv2.circle(output_img, center=center, radius=3, color=(0, 0, 255), thickness=-1)
+            # cv2.drawContours(output_img, np.int0(cv2.boxPoints(rect)), -1, (0, 0, 255), 2)
+            cv2.drawContours(output_img, [contour], -1, (212, 0, 255), 5)
+            cv2.circle(output_img, center=tuple(center), radius=4, color=(0, 0, 255), thickness=-1)
+
+            width = size[0]
 
             x_list.append((center[0] - width / 2) / (width / 2))
             y_list.append((center[1] - height / 2) / (height / 2))
             area_list.append(area)
+            width_list.append(width)
+            distance.append(8.25 * focal / width)
 
 
         vision_nt.putNumberArray('x_pos', x_list)
         vision_nt.putNumberArray('y_pos', y_list)
         vision_nt.putNumberArray('area', area_list)
+        vision_nt.putNumberArray('width', width_list)
+        vision_nt.putNumberArray('distance', distance)
+        
 
         processing_time = time.time() - start_time
         fps = 1 / processing_time
-        cv2.putText(output_img, str(round(fps, 1)), (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
+        cv2.putText(output_img, str(round(fps, 1))+ " fps", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255))
+        if(len(distance)>0):
+            cv2.putText(output_img, str(round(distance[0], 1))+" in", (0, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255))
         output_stream.putFrame(output_img)
