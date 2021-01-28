@@ -13,6 +13,8 @@ import frc.robot.commands.DriveTank;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 
 public class Drivetrain extends SubsystemBase {
@@ -35,6 +37,8 @@ public class Drivetrain extends SubsystemBase {
   // Odometry class for tracking robot position
   private final DifferentialDriveOdometry odometry;
 
+  private NetworkTable nt;
+
   // Creates a new DriveSubsystem.
   public Drivetrain() {
     // Sets the distance per pulse for the encoders
@@ -45,12 +49,23 @@ public class Drivetrain extends SubsystemBase {
     odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
     //link the command to the subsystem
     setDefaultCommand(new DriveTank(this));
+    
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    nt = inst.getTable("Position");
   }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     odometry.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
+    Pose2d position = odometry.getPoseMeters();
+    double x = position.getX();
+    double y = position.getY();
+    double rotation = position.getRotation().getDegrees();
+
+    nt.getEntry("x").setDouble(x);
+    nt.getEntry("y").setDouble(y);
+    nt.getEntry("rotation").setDouble(rotation);
   }
 
   // Returns the currently-estimated pose of the robot.
