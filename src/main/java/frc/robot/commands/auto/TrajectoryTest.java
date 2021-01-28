@@ -40,12 +40,12 @@ public class TrajectoryTest extends SequentialCommandGroup {
 
         //First test to see if it can follow a basic path
         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0, 0, new Rotation2d(0)),
+            new Pose2d(0.1518347624, 0.0532079543, new Rotation2d(7.799128318 * 3.1415926535/180.0)),
             List.of(
-                new Translation2d(4, 2)
-                // new Translation2d(10, 0)
+                new Translation2d(0,3),
+                new Translation2d(1,10)
             ),
-            new Pose2d(6, 2, new Rotation2d(0)),
+            new Pose2d(2, 15, new Rotation2d(4.410397358 * 3.1415926535/180.0)),
             config
         );
 
@@ -71,7 +71,7 @@ public class TrajectoryTest extends SequentialCommandGroup {
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + testJson, ex.getStackTrace());
         }
-        addCommands(new FollowTrajectory(barell2Trajectory, drivetrain));
+        // addCommands(new FollowTrajectory(barell2Trajectory, drivetrain));
         
         String barell3Json = "paths/Barell3.wpilib.json";
         Trajectory barell3Trajectory = new Trajectory();
