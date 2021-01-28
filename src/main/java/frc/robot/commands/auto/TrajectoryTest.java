@@ -25,6 +25,13 @@ public class TrajectoryTest extends SequentialCommandGroup {
      * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
     public TrajectoryTest(Turret turret, Drivetrain drivetrain, BallSuck ballsuck){
+
+        Pose2d[] positions = {
+            new Pose2d(0, 0, new Rotation2d(0)),
+            new Pose2d(3, 0, new Rotation2d(0)),
+            new Pose2d(6, 0, new Rotation2d(0))
+        };
+        addCommands(new TrajectoryFollow(drivetrain, positions));
         
             // Create a voltage constraint to ensure we don't accelerate too fast
         DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
