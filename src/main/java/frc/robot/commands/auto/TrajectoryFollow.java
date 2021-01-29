@@ -51,8 +51,8 @@ public class TrajectoryFollow extends CommandBase {
         double[] errors = errorFromPoint(target);
         double[] encoders = { drivetrain.getLeftEncoder().getRate(), drivetrain.getRightEncoder().getRate() };
         double encoderScaler = 1 - Math.abs(errors[3]);
-        if(encoderScaler<0.2){
-            encoderScaler = 0.2;
+        if(encoderScaler<0.1){
+            encoderScaler = 0.1;
         }
         if(errors[3]>=0){
             rightPID.setTarget(targetVelocity * encoderScaler);
@@ -93,14 +93,17 @@ public class TrajectoryFollow extends CommandBase {
         double errorX = point.getX() - drivetrain.getPose().getX();
         double errorY = point.getY() - drivetrain.getPose().getY();
         double distanceError = Math.sqrt(errorX * errorX + errorY * errorY);
-        double targetAngle = Math.atan(errorY/errorX);
-        // if(errorX<0){
-        //     targetAngle += Math.PI;
-        // }
-        double angleError = point.getRotation().getRadians() - targetAngle;
-        angleError = angleError % (Math.PI);
-        
-        nt.getEntry("angleTarget").setDouble(targetAngle);
+        double robotAngle = drivetrain.getPose().getRotation().getRadians();
+        double robotX = Math.cos(robotAngle);
+        double robotY = Math.sin(robotAngle);
+        double normalErrorX = errorX/distanceError;
+        double normalErrorY = errorY/distanceError;
+        double dot = robotX * normalErrorX + robotY * normalErrorY;
+        double angleError = Math.acos(dot);
+        double dotRotated = -robotY * normalErrorX + robotX * normalErrorY;
+        if(dotRotated<0){
+            angleError *= -1;
+        }
         nt.getEntry("angleError").setDouble(angleError);
         double[] error = {errorX, errorY, distanceError, angleError};
         return error;
