@@ -48,7 +48,7 @@ public class Drivetrain extends SubsystemBase {
     resetEncoders();
     odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
     //link the command to the subsystem
-    setDefaultCommand(new DriveTank(this));
+    // setDefaultCommand(new DriveTank(this));
     
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     nt = inst.getTable("Position");

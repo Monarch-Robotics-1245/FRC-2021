@@ -29,7 +29,7 @@ public class TrajectoryTest extends SequentialCommandGroup {
         Pose2d[] positions = {
             new Pose2d(0, 0, new Rotation2d(0)),
             new Pose2d(3, 0, new Rotation2d(0)),
-            new Pose2d(6, 0, new Rotation2d(0))
+            new Pose2d(6.2, 0, new Rotation2d(0))
         };
         addCommands(new TrajectoryFollow(drivetrain, positions));
         
@@ -68,7 +68,7 @@ public class TrajectoryTest extends SequentialCommandGroup {
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + testJson, ex.getStackTrace());
         }
-        addCommands(new FollowTrajectory(testTrajectory, drivetrain));
+        // addCommands(new FollowTrajectory(testTrajectory, drivetrain));
 
         String barell2Json = "paths/Barell2.wpilib.json";
         Trajectory barell2Trajectory = new Trajectory();

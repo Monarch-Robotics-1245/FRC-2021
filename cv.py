@@ -265,7 +265,7 @@ if __name__ == "__main__":
 
         # Convert to HSV and threshold image
         hsv_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2HSV)
-        binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
+        binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255))
 
         _, contour_list, _ = cv2.findContours(binary_img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
 

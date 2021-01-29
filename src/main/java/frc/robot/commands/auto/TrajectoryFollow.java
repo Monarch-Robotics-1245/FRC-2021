@@ -41,8 +41,8 @@ public class TrajectoryFollow extends CommandBase {
         index = 1;
         drivetrain.resetOdometry(positions[0]);
         finished = false;
-        leftPID = new MotorControlPID(targetVelocity,1.0,0.5,0.3,0.02);
-        rightPID = new MotorControlPID(targetVelocity,1.0,0.5,0.3,0.02);
+        leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.3,0.02);
+        rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.3,0.02);
     }
 
     @Override
@@ -54,14 +54,17 @@ public class TrajectoryFollow extends CommandBase {
         if(encoderScaler<0.2){
             encoderScaler = 0.2;
         }
-        if(errors[3]<0){
-            rightPID.setTarget(targetVelocity * -encoderScaler);
+        if(errors[3]>=0){
+            rightPID.setTarget(targetVelocity * encoderScaler);
             leftPID.setTarget(targetVelocity);
         }
         else{
             leftPID.setTarget(targetVelocity * encoderScaler);
             rightPID.setTarget(targetVelocity);
         }
+
+        double leftSpeed = leftPID.getSpeed(encoders[0]);
+        double rightSpeed = rightPID.getSpeed(encoders[1]);
 
         nt.getEntry("leftTarget").setDouble(leftPID.getTarget());
         nt.getEntry("rightTarget").setDouble(rightPID.getTarget());
@@ -72,11 +75,14 @@ public class TrajectoryFollow extends CommandBase {
         nt.getEntry("errorY").setDouble(errors[1]);
         nt.getEntry("errorDist").setDouble(errors[2]);
         nt.getEntry("errorRad").setDouble(errors[3]);
+        nt.getEntry("leftSpeed").setDouble(leftSpeed);
+        nt.getEntry("rightSpeed").setDouble(rightSpeed);
 
-        // drivetrain.tankDrive(leftPID.getSpeed(encoders[0]), rightPID.getSpeed(encoders[1]));
 
-        if(errors[2]<maxErrorDistance && errors[3] < maxErrorRotation){
-            // index++;
+        // drivetrain.tankDrive(leftSpeed, rightSpeed);
+
+        if(errors[2]<maxErrorDistance && Math.abs(errors[3]) < maxErrorRotation){
+            index++;
             if(index>=positions.length){
                 finished = true;
             }
@@ -86,9 +92,16 @@ public class TrajectoryFollow extends CommandBase {
     double[] errorFromPoint(Pose2d point){
         double errorX = point.getX() - drivetrain.getPose().getX();
         double errorY = point.getY() - drivetrain.getPose().getY();
-        double distanceError = Math.sqrt(errorX * errorX + errorY * errorY) ;
-        double angleError = point.getRotation().getRadians() - drivetrain.getPose().getRotation().getRadians();
-        angleError = angleError % (2*Math.PI);
+        double distanceError = Math.sqrt(errorX * errorX + errorY * errorY);
+        double targetAngle = Math.atan(errorY/errorX);
+        // if(errorX<0){
+        //     targetAngle += Math.PI;
+        // }
+        double angleError = point.getRotation().getRadians() - targetAngle;
+        angleError = angleError % (Math.PI);
+        
+        nt.getEntry("angleTarget").setDouble(targetAngle);
+        nt.getEntry("angleError").setDouble(angleError);
         double[] error = {errorX, errorY, distanceError, angleError};
         return error;
     }

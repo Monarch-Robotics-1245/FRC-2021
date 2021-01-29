@@ -46,7 +46,10 @@ public class DriveTank extends CommandBase {
      */
     @Override
     public void execute() {
+        // System.out.println("HELLO from DriveTank");
         if(!OI.rightJoystick.getTrigger() && !OI.leftJoystick.getTrigger()){
+            if(OI.deadZone(OI.leftJoystick.getY(), Constants.getDeadZone()) != 0 && OI.deadZone(OI.rightJoystick.getY(), Constants.getDeadZone()) != 0 )
+            System.out.println("HELLO from DriveTank");
             drivetrain.tankDrive(
                 -OI.deadZone(OI.leftJoystick.getY(), Constants.getDeadZone()), 
                 -OI.deadZone(OI.rightJoystick.getY(), Constants.getDeadZone())
