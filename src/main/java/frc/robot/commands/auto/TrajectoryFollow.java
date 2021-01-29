@@ -57,11 +57,14 @@ public class TrajectoryFollow extends CommandBase {
 
         //Calulate how fast the "inside" wheel should spin based on how far we should
         double encoderScaler = 1 - Math.abs(errors[3]);
+        // if(Math.abs(errors[3])>=2*Math.PI/3){
+        //  encoderScaler = 1 - Math.PI + Math.abs(errors[3]);
+        // } 
         if(encoderScaler<0.1){
             encoderScaler = 0.1;
         }
         //Set the "inside" wheel to spin at a slower rate (from above)
-        if(errors[3]>=0){
+        if(errors[3]<=0){
             rightPID.setTarget(targetVelocity * encoderScaler);
             leftPID.setTarget(targetVelocity);
         }
@@ -69,6 +72,11 @@ public class TrajectoryFollow extends CommandBase {
             leftPID.setTarget(targetVelocity * encoderScaler);
             rightPID.setTarget(targetVelocity);
         }
+
+        // if(Math.abs(errors[3])>=2*Math.PI/3){
+        //     rightPID.setTarget(-rightPID.getTarget());
+        //     leftPID.setTarget(-leftPID.getTarget());
+        // }
         
         //Get the power to apply to each motor based on how fast encoders are spinning.
         double leftSpeed = leftPID.getSpeed(encoders[0]);
@@ -120,7 +128,7 @@ public class TrajectoryFollow extends CommandBase {
         //figure out if we need to flip the angle based on which direction we need to spin
         //https://stackoverflow.com/a/13221874
         double dotRotated = -robotY * normalErrorX + robotX * normalErrorY;
-        if(dotRotated>0){
+        if(dotRotated<0){
             angleError *= -1;
         }
 
