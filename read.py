@@ -16,5 +16,5 @@ while True:
     # print("y: "+str(y))
     # print("rot: "+str(rot))
     f.write(str(x)+","+str(y)+","+str(rot)+"\n")
-    time.sleep(0.05)
+    time.sleep(0.20)
 

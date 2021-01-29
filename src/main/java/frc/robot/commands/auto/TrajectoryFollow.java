@@ -18,13 +18,13 @@ public class TrajectoryFollow extends CommandBase {
     private MotorControlPID leftPID, rightPID;
 
     //max distance (in meters) we can be in order for it to be valid.
-    final double maxErrorDistance = 0.1;
+    final double maxErrorDistance = 0.5;
 
     //max rotation we can be in radians
     final double maxErrorRotation =0.5;
 
     //meters per second.
-    final double targetVelocity = 0.5;
+    final double targetVelocity = 3.0;
     
     private NetworkTable nt;
 
@@ -42,8 +42,8 @@ public class TrajectoryFollow extends CommandBase {
         index = 1;
         drivetrain.resetOdometry(positions[0]);
         finished = false;
-        leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.3,0.02);
-        rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.3,0.02);
+        leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
+        rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
     }
 
     @Override
@@ -57,11 +57,11 @@ public class TrajectoryFollow extends CommandBase {
 
         //Calulate how fast the "inside" wheel should spin based on how far we should
         double encoderScaler = 1 - Math.abs(errors[3]);
-        // if(Math.abs(errors[3])>=2*Math.PI/3){
+        // if(Math.abs(errors[3])>=3*Math.PI/4 && errors[2] > 0.5){
         //  encoderScaler = 1 - Math.PI + Math.abs(errors[3]);
         // } 
-        if(encoderScaler<0.1){
-            encoderScaler = 0.1;
+        if(encoderScaler<-1.0){
+            encoderScaler = -1.0;
         }
         //Set the "inside" wheel to spin at a slower rate (from above)
         if(errors[3]<=0){
@@ -99,8 +99,10 @@ public class TrajectoryFollow extends CommandBase {
         drivetrain.tankDrive(leftSpeed, rightSpeed);
 
         //If we are close to the target point, advance to the next index. If it is the last point, finish the command.
-        if(errors[2]<maxErrorDistance && Math.abs(errors[3]) < maxErrorRotation){
+        if(errors[2]<maxErrorDistance){
             index++;
+            leftPID.reset();
+            rightPID.reset();
             if(index>=positions.length){
                 finished = true;
             }
