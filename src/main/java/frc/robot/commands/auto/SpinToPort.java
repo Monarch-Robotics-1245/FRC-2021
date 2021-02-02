@@ -31,12 +31,11 @@ public class SpinToPort extends CommandBase {
 
     public SpinToPort(Drivetrain drivetrain) {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        nt = inst.getTable("vision");
+        nt = inst.getTable("Vision");
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
         isFinished = false;
         timer = new Timer();
-        inst.startClientTeam(1245);
     }
 
     /**
@@ -46,8 +45,8 @@ public class SpinToPort extends CommandBase {
     public void initialize() {
         Robot.canShootAuto = false;
         spinSpeed = 0;
-        encoderSpinControlLeft = new MotorControlPID(3,1.0,0.8,0.018,0.0005);
-        encoderSpinControlRight = new MotorControlPID(-3,1.0,0.8,0.018,0.0005);
+        encoderSpinControlLeft = new MotorControlPID(0.0,1.0,0.8,0.05,0.0005);
+        encoderSpinControlRight = new MotorControlPID(0.0,1.0,0.8,0.05,0.0005);
         // spinControl = new MotorControlPID(160,0.4,0.15,0.0025,0.00004,0.00025);
         // spinControl = new MotorControlPID(160,0.4,0.15,0.004,0,0.00025);
         isFinished = false;
@@ -82,6 +81,10 @@ public class SpinToPort extends CommandBase {
         // gets the x coordinate of the target with the largest area.
         // a number between -1 and 1, where 0 is the center.
         double x = targets[0].x;
+        
+        if(Math.abs(x)<0.05){
+            isFinished = true;
+        }
 
         if(x>0.3){
             x = 0.3;
@@ -95,10 +98,21 @@ public class SpinToPort extends CommandBase {
         else if(x<0 && x>-0.1){
             x = -0.1;
         }
-        drivetrain.tankDrive(-x, x);
-        if(Math.abs(x)<0.02){
-            isFinished = true;
+        x = (x * 8);
+        if(x>0){
+            x+=1.5;
         }
+        else{
+            x-=1.5;
+        }
+        nt.getEntry("spin").setDouble(x);
+        encoderSpinControlLeft.setTarget(x);
+        encoderSpinControlRight.setTarget(-x);
+        double spinSpeedLeft = encoderSpinControlLeft.getSpeed(drivetrain.getLeftEncoder().getRate());
+        double spinSpeedRight = encoderSpinControlRight.getSpeed(drivetrain.getRightEncoder().getRate());
+        nt.getEntry("spinL").setDouble(spinSpeedLeft / 1.5);
+        nt.getEntry("spinR").setDouble(spinSpeedRight / 1.5);
+        drivetrain.tankDrive(spinSpeedLeft / 1.5, spinSpeedRight / 1.5);
 
         
 //         // spinSpeed = - 0.25;
@@ -194,6 +208,7 @@ public class SpinToPort extends CommandBase {
     public void end(boolean interrupted) {
         drivetrain.tankDriveVolts(0, 0);
         System.out.println("DONE WITH ALIGN");
+        nt.getEntry("spin").setDouble(0.0);
         Robot.canShootAuto = true;
     }
 }

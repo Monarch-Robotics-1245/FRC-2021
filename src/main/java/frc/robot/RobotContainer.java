@@ -11,8 +11,10 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.TrajectoryTest;
+import frc.robot.commands.auto.SpinToPort;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
+
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -33,6 +35,7 @@ public class RobotContainer {
   private final Climb climb = new Climb(pullup);
   private final BallIntake ballintake = new BallIntake(ballsuck);
 
+  private final SpinToPort autoSpin = new SpinToPort(drivetrain);
   private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);
   //  private final AutoGroup autoCommand = new AutoGroup(turret, drivetrain, ballsuck);
@@ -78,6 +81,6 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     // return autoCommand;
     // return driveTank;
-    return autoTrajectoryTest;
+    return autoSpin;
   }
 }
