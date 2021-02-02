@@ -246,6 +246,8 @@ if __name__ == "__main__":
     width = 640
     height = 480
 
+    print(cameras)
+
     port_stream = CameraServer.getInstance().getVideo(camera=cameras[0])
     port_stream_out = CameraServer.getInstance().putVideo('Power Port', width, height)
 
@@ -313,7 +315,7 @@ if __name__ == "__main__":
         vision_nt.putNumberArray('width', width_list)
         vision_nt.putNumberArray('distance', distance)
 
-        frametime, input_ball = port_stream.grabFrame(input_ball)
+        frametime, input_ball = ball_stream.grabFrame(input_ball)
         output_ball = np.copy(input_ball)
 
         # Notify output of error and skip iteration
@@ -322,8 +324,8 @@ if __name__ == "__main__":
             continue
 
         # Convert to HSV and threshold image
-        hsv_img = cv2.cvtColor(input_port, cv2.COLOR_BGR2HSV)
-        binary_img = cv2.inRange(hsv_img, (20, 100, 130), (60, 255, 255))
+        hsv_img = cv2.cvtColor(input_ball, cv2.COLOR_BGR2HSV)
+        binary_img = cv2.inRange(hsv_img, (20, 80, 20), (90, 255, 255))
 
         _, contour_list_ball, _ = cv2.findContours(binary_img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
 
