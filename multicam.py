@@ -7,7 +7,6 @@
 import json
 import time
 import sys
-import threading
 
 from cscore import CameraServer, VideoSource, UsbCamera, MjpegServer
 from networktables import NetworkTablesInstance, NetworkTables
@@ -67,10 +66,6 @@ server = False
 cameraConfigs = []
 switchedCameraConfigs = []
 cameras = []
-
-width = 640
-height = 480
-focal = 60 * 94 / 8.25
 
 
 def parseError(str):
@@ -222,143 +217,6 @@ def startSwitchedCamera(config):
     return server
 
 
-class portThread(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.threadID = 'Thread-port'
-
-    def run(self):
-        print("Starting port thread")
-        # Table for vision output information
-        vision_nt = NetworkTables.getTable('Vision')
-        input_port = np.zeros(shape=(480, 640, 3), dtype=np.uint8)
-        port_stream = CameraServer.getInstance().getVideo(camera=cameras[0])
-        port_stream_out = CameraServer.getInstance().putVideo('Power Port', width, height)
-        while True:
-            start_time = time.time()
-            frametime, input_port = port_stream.grabFrame(input_port)
-            output_port = np.copy(input_port)
-
-            # Notify output of error and skip iteration
-            if frametime == 0:
-                port_stream_out.notifyError(port_stream.getError())
-                continue
-
-            # Convert to HSV and threshold image
-            hsv_img = cv2.cvtColor(input_port, cv2.COLOR_BGR2HSV)
-            binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255))
-
-            _, contour_list_port, _ = cv2.findContours(binary_img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
-
-            x_list = []
-            y_list = []
-            area_list = []
-            width_list = []
-            distance = []
-
-            for contour in contour_list_port:
-                area = cv2.contourArea(contour)
-                # Ignore small contours that could be because of noise/bad thresholding
-                if area < 1:
-                    continue
-
-                rect = cv2.minAreaRect(contour)
-                center, size, angle = rect
-                center = [int(dim) for dim in center]  # Convert to int so we can draw
-                cv2.drawContours(output_port, [contour], -1, (212, 0, 255), 5)
-                cv2.circle(output_port, center=tuple(center), radius=4, color=(0, 0, 255), thickness=-1)
-
-                target_width = size[0]
-                x_list.append((center[0] - width / 2) / (width / 2))
-                y_list.append((center[1] - height / 2) / (height / 2))
-                area_list.append(area)
-                width_list.append(target_width)
-                distance.append(8.25 * focal / target_width)
-
-            vision_nt.putNumberArray('x_pos', x_list)
-            vision_nt.putNumberArray('y_pos', y_list)
-            vision_nt.putNumberArray('area', area_list)
-            vision_nt.putNumberArray('width', width_list)
-            vision_nt.putNumberArray('distance', distance)
-            processing_time = time.time() - start_time
-            fps = 1 / processing_time
-            cv2.putText(output_port, str(round(fps, 1)) + " fps", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
-                        (255, 255, 255))
-            if len(distance) > 0:
-                cv2.putText(output_port, str(round(distance[0], 1)) + " in", (0, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
-                            (255, 255, 255))
-            port_stream_out.putFrame(output_port)
-        print("exiting port thread")
-
-class ballThread(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.threadID = 'Thread-ball'
-
-    def run(self):
-        print("Starting ball thread")
-        # Table for vision output information
-        ball_nt = NetworkTables.getTable('Balls')
-        input_ball = np.zeros(shape=(480, 640, 3), dtype=np.uint8)
-        ball_stream = CameraServer.getInstance().getVideo(camera=cameras[1])
-        ball_stream_out = CameraServer.getInstance().putVideo('Balls', width, height)
-        while True:
-            start_time = time.time()
-            frametime, input_ball = ball_stream.grabFrame(input_ball)
-            output_ball = np.copy(input_ball)
-
-            # Notify output of error and skip iteration
-            if frametime == 0:
-                ball_stream_out.notifyError(ball_stream.getError())
-                continue
-
-            # Convert to HSV and threshold image
-            hsv_img = cv2.cvtColor(input_ball, cv2.COLOR_BGR2HSV)
-            binary_img = cv2.inRange(hsv_img, (20, 80, 20), (90, 255, 255))
-
-            _, contour_list_ball, _ = cv2.findContours(binary_img, mode=cv2.RETR_EXTERNAL,
-                                                       method=cv2.CHAIN_APPROX_SIMPLE)
-
-            x_list = []
-            y_list = []
-            area_list = []
-            width_list = []
-            distance = []
-
-            for contour in contour_list_ball:
-
-                area = cv2.contourArea(contour)
-                # Ignore small contours that could be because of noise/bad thresholding
-                if area < 1:
-                    continue
-
-                rect = cv2.minAreaRect(contour)
-                center, size, angle = rect
-                center = [int(dim) for dim in center]  # Convert to int so we can draw
-                cv2.drawContours(output_ball, [contour], -1, (212, 0, 255), 5)
-                cv2.circle(output_ball, center=tuple(center), radius=4, color=(0, 0, 255), thickness=-1)
-
-                # target_width = size[0]
-                x_list.append((center[0] - width / 2) / (width / 2))
-                y_list.append((center[1] - height / 2) / (height / 2))
-                area_list.append(area)
-                # width_list.append(target_width)
-                # distance.append(8.25 * focal / target_width)
-
-            ball_nt.putNumberArray('x_pos', x_list)
-            ball_nt.putNumberArray('y_pos', y_list)
-            ball_nt.putNumberArray('area', area_list)
-            # ball_nt.putNumberArray('width', width_list)
-            # ball_nt.putNumberArray('distance', distance)
-
-
-            processing_time = time.time() - start_time
-            fps = 1 / processing_time
-            cv2.putText(output_ball, str(round(fps, 1)) + " fps", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
-                        (255, 255, 255))
-            ball_stream_out.putFrame(output_ball)
-
-
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         configFile = sys.argv[1]
@@ -385,18 +243,124 @@ if __name__ == "__main__":
     for config in switchedCameraConfigs:
         startSwitchedCamera(config)
 
+    width = 640
+    height = 480
+
+    print(cameras)
+
+    port_stream = CameraServer.getInstance().getVideo(camera=cameras[0])
+    port_stream_out = CameraServer.getInstance().putVideo('Power Port', width, height)
+
+    ball_stream = CameraServer.getInstance().getVideo(camera=cameras[1])
+    ball_stream_out = CameraServer.getInstance().putVideo('Balls', width, height)
+
+    # Table for vision output information
+    vision_nt = NetworkTables.getTable('Vision')
+
     # Wait for NetworkTables to start
     time.sleep(0.5)
 
+    input_port = np.zeros(shape=(480, 640, 3), dtype=np.uint8)
+    input_ball = np.zeros(shape=(480, 640, 3), dtype=np.uint8)
+
     print("Doing computer vision things")
+    focal = 60 * 94 / 8.25
 
-    threadPort = portThread()
-    threadBall = ballThread()
-
-    # Start new Threads
-    threadPort.start()
-    threadBall.start()
-
-    # loop forever, allows the threads to keep running
+    # loop forever
     while True:
-        pass
+        start_time = time.time()
+        frametime, input_port = port_stream.grabFrame(input_port)
+        output_port = np.copy(input_port)
+
+        # Notify output of error and skip iteration
+        if frametime == 0:
+            port_stream_out.notifyError(port_stream.getError())
+            continue
+
+        # Convert to HSV and threshold image
+        hsv_img = cv2.cvtColor(input_port, cv2.COLOR_BGR2HSV)
+        binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255))
+
+        _, contour_list_port, _ = cv2.findContours(binary_img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
+
+        x_list = []
+        y_list = []
+        area_list = []
+        width_list = []
+        distance = []
+
+        for contour in contour_list_port:
+
+            area = cv2.contourArea(contour)
+            # Ignore small contours that could be because of noise/bad thresholding
+            if area < 1:
+                continue
+
+            rect = cv2.minAreaRect(contour)
+            center, size, angle = rect
+            center = [int(dim) for dim in center]  # Convert to int so we can draw
+            cv2.drawContours(output_port, [contour], -1, (212, 0, 255), 5)
+            cv2.circle(output_port, center=tuple(center), radius=4, color=(0, 0, 255), thickness=-1)
+
+            target_width = size[0]
+            x_list.append((center[0] - width / 2) / (width / 2))
+            y_list.append((center[1] - height / 2) / (height / 2))
+            area_list.append(area)
+            width_list.append(target_width)
+            distance.append(8.25 * focal / target_width)
+
+        vision_nt.putNumberArray('x_pos', x_list)
+        vision_nt.putNumberArray('y_pos', y_list)
+        vision_nt.putNumberArray('area', area_list)
+        vision_nt.putNumberArray('width', width_list)
+        vision_nt.putNumberArray('distance', distance)
+
+        frametime, input_ball = ball_stream.grabFrame(input_ball)
+        output_ball = np.copy(input_ball)
+
+        # Notify output of error and skip iteration
+        if frametime == 0:
+            ball_stream_out.notifyError(ball_stream.getError())
+            continue
+
+        # Convert to HSV and threshold image
+        hsv_img = cv2.cvtColor(input_ball, cv2.COLOR_BGR2HSV)
+        binary_img = cv2.inRange(hsv_img, (20, 80, 20), (90, 255, 255))
+
+        _, contour_list_ball, _ = cv2.findContours(binary_img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
+
+        # x_list = []
+        # y_list = []
+        # area_list = []
+        # width_list = []
+        # distance = []
+
+        for contour in contour_list_ball:
+
+            area = cv2.contourArea(contour)
+            # Ignore small contours that could be because of noise/bad thresholding
+            if area < 1:
+                continue
+
+            rect = cv2.minAreaRect(contour)
+            center, size, angle = rect
+            center = [int(dim) for dim in center]  # Convert to int so we can draw
+            cv2.drawContours(output_ball, [contour], -1, (212, 0, 255), 5)
+            cv2.circle(output_ball, center=tuple(center), radius=4, color=(0, 0, 255), thickness=-1)
+
+            # target_width = size[0]
+            # x_list.append((center[0] - width / 2) / (width / 2))
+            # y_list.append((center[1] - height / 2) / (height / 2))
+            # area_list.append(area)
+            # width_list.append(target_width)
+            # distance.append(8.25 * focal / target_width)
+
+        processing_time = time.time() - start_time
+        fps = 1 / processing_time
+        cv2.putText(output_port, str(round(fps, 1)) + " fps", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255))
+        cv2.putText(output_ball, str(round(fps, 1)) + " fps", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255))
+        if len(distance) > 0:
+            cv2.putText(output_port, str(round(distance[0], 1)) + " in", (0, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
+                        (255, 255, 255))
+        port_stream_out.putFrame(output_port)
+        ball_stream_out.putFrame(output_ball)
