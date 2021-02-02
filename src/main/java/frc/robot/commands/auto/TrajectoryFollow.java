@@ -5,17 +5,21 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.MotorControlPID;
+import frc.robot.subsystems.BallSuck;
 import frc.robot.subsystems.Drivetrain;
 
 public class TrajectoryFollow extends CommandBase {
 
     Drivetrain drivetrain;
+    BallSuck ballsuck;
     Pose2d[] positions;
 
     int index;
     boolean finished;
 
     private MotorControlPID leftPID, rightPID;
+
+    private boolean useIntake;
 
     //max distance (in meters) we can be in order for it to be valid.
     final double maxErrorDistance = 0.5;
@@ -35,6 +39,18 @@ public class TrajectoryFollow extends CommandBase {
 
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         nt = inst.getTable("PathFollowing");
+        useIntake = false;
+    }
+
+    TrajectoryFollow(Drivetrain drivetrain, Pose2d[] positions, BallSuck ballsuck){
+        this.drivetrain = drivetrain;
+        this.positions = positions;
+        this.ballsuck = ballsuck;
+        addRequirements(drivetrain);
+
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        nt = inst.getTable("PathFollowing");
+        useIntake = true;
     }
 
     @Override
@@ -44,6 +60,10 @@ public class TrajectoryFollow extends CommandBase {
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
+        if(useIntake && ballsuck != null){
+            ballsuck.turnOnIntake();
+            ballsuck.turnOnHandle();
+        }
     }
 
     @Override
@@ -148,5 +168,9 @@ public class TrajectoryFollow extends CommandBase {
     public void end(boolean interrupted) {
         drivetrain.tankDriveVolts(0, 0);
         System.out.println("DONE WITH ALIGN");
+        if(useIntake && ballsuck != null){
+            ballsuck.turnOffIntake();
+            ballsuck.turnOffHandle();
+        }
     }
 }

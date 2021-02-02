@@ -37,7 +37,7 @@ public class TrajectoryTest extends SequentialCommandGroup {
         // Pose2d[] slalom = loadCSV("Slalom.csv");
         // addCommands(new TrajectoryFollow(drivetrain, slalom));
         
-        // Pose2d[] circle = loadCSV("Loop.csv");
+        // Pose2d[] circle = loadCSV("Circle.csv");
         // addCommands(new TrajectoryFollow(drivetrain, circle));
     }
 
@@ -51,7 +51,7 @@ public class TrajectoryTest extends SequentialCommandGroup {
             String[] parts = line.split(",");
             Pose2d newPose = new Pose2d(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]), new Rotation2d(0));
             poseList.add(newPose);
-            System.out.println(newPose);
+            // System.out.println(newPose);
           }
         } catch (IOException e) {
           e.printStackTrace();
