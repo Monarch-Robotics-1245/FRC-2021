@@ -48,6 +48,8 @@ public class Robot extends TimedRobot {
 
   public static boolean canShootAuto = true;
 
+  public int cameraIndex;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -62,11 +64,13 @@ public class Robot extends TimedRobot {
     intakeCamera = CameraServer.getInstance().startAutomaticCapture("Intake View", 0);
     intakeCamera.setResolution(320, 240);
 
-
     cvExposureAuto = false;
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    nt = inst.getTable("vision");
+    nt = inst.getTable("Vision");
+    nt.getEntry("camera_index").setNumber(0);
 
+    cameraIndex = 0;
+  
     canShootAuto = true;
   }
 
@@ -87,12 +91,9 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     if(OI.leftJoystick.getRawButtonPressed(8)){
-      cvExposureAuto = !cvExposureAuto;
-      nt.getEntry("exposure_auto").setBoolean(cvExposureAuto);
-      //update NetworkTable with value
+      cameraIndex = (cameraIndex + 1) % 2;
+      nt.getEntry("camera_index").setNumber(cameraIndex);
     }
-    
-
   }
 
   /**

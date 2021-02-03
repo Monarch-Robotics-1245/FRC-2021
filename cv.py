@@ -57,7 +57,9 @@ import numpy as np
 
 configFile = "/boot/frc.json"
 
+
 class CameraConfig: pass
+
 
 team = None
 server = False
@@ -65,9 +67,11 @@ cameraConfigs = []
 switchedCameraConfigs = []
 cameras = []
 
+
 def parseError(str):
     """Report parse error."""
     print("config error in '" + configFile + "': " + str, file=sys.stderr)
+
 
 def readCameraConfig(config):
     """Read single camera configuration."""
@@ -95,6 +99,7 @@ def readCameraConfig(config):
     cameraConfigs.append(cam)
     return True
 
+
 def readSwitchedCameraConfig(config):
     """Read single switched camera configuration."""
     cam = CameraConfig()
@@ -115,6 +120,7 @@ def readSwitchedCameraConfig(config):
 
     switchedCameraConfigs.append(cam)
     return True
+
 
 def readConfig():
     """Read configuration file."""
@@ -169,6 +175,7 @@ def readConfig():
 
     return True
 
+
 def startCamera(config):
     """Start running the camera."""
     print("Starting camera '{}' on {}".format(config.name, config.path))
@@ -184,6 +191,7 @@ def startCamera(config):
 
     return camera
 
+
 def startSwitchedCamera(config):
     """Start running the switched camera."""
     print("Starting switched camera '{}' on {}".format(config.name, config.key))
@@ -193,7 +201,7 @@ def startSwitchedCamera(config):
         if isinstance(value, float):
             i = int(value)
             if i >= 0 and i < len(cameras):
-              server.setSource(cameras[i])
+                server.setSource(cameras[i])
         elif isinstance(value, str):
             for i in range(len(cameraConfigs)):
                 if value == cameraConfigs[i].name:
@@ -207,6 +215,7 @@ def startSwitchedCamera(config):
         NetworkTablesInstance.NotifyFlags.UPDATE)
 
     return server
+
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
@@ -237,9 +246,6 @@ if __name__ == "__main__":
     width = 640
     height = 480
 
-    input_stream = CameraServer.getInstance().getVideo()
-    output_stream = CameraServer.getInstance().putVideo('Processed', width, height)
-
     # Table for vision output information
     vision_nt = NetworkTables.getTable('Vision')
 
@@ -252,9 +258,19 @@ if __name__ == "__main__":
 
     focal = 60 * 94 / 8.25
 
+    camera_index = vision_nt.getNumber("camera_index", 0)
+
+    input_stream = CameraServer.getInstance().getVideo(camera=cameras[camera_index])
+    output_stream = CameraServer.getInstance().putVideo('Processed', width, height)
+
     # loop forever
     while True:
         start_time = time.time()
+        temp_camera_index = vision_nt.getNumber("camera_index", 0)
+        if temp_camera_index != camera_index:
+            camera_index = temp_camera_index
+            input_stream = CameraServer.getInstance().getVideo(camera=cameras[camera_index])
+
         frame_time, input_img = input_stream.grabFrame(input_img)
         output_img = np.copy(input_img)
 
@@ -265,9 +281,15 @@ if __name__ == "__main__":
 
         # Convert to HSV and threshold image
         hsv_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2HSV)
-        #inside:
-        binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
-        #outside:
+        binary_img = np.zeros(shape=(480, 640, 3))
+
+        # inside:
+        if camera_index == 0:
+            binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
+        elif camera_index == 1:
+            binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255))
+
+        # outside:
         # binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255))
 
         _, contour_list, _ = cv2.findContours(binary_img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
@@ -304,17 +326,16 @@ if __name__ == "__main__":
             width_list.append(target_width)
             distance.append(8.25 * focal / target_width)
 
-
         vision_nt.putNumberArray('x_pos', x_list)
         vision_nt.putNumberArray('y_pos', y_list)
         vision_nt.putNumberArray('area', area_list)
         vision_nt.putNumberArray('width', width_list)
         vision_nt.putNumberArray('distance', distance)
-        
 
         processing_time = time.time() - start_time
         fps = 1 / processing_time
-        cv2.putText(output_img, str(round(fps, 1))+ " fps", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255))
-        if(len(distance)>0):
-            cv2.putText(output_img, str(round(distance[0], 1))+" in", (0, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255))
+        cv2.putText(output_img, str(round(fps, 1)) + " fps", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255))
+        if (len(distance) > 0):
+            cv2.putText(output_img, str(round(distance[0], 1)) + " in", (0, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
+                        (255, 255, 255))
         output_stream.putFrame(output_img)
