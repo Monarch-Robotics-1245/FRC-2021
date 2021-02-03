@@ -260,7 +260,7 @@ if __name__ == "__main__":
 
     camera_index = vision_nt.getNumber("camera_index", 0)
 
-    input_stream = CameraServer.getInstance().getVideo(camera=cameras[camera_index])
+    input_stream = CameraServer.getInstance().getVideo(camera=cameras[int(camera_index)])
     output_stream = CameraServer.getInstance().putVideo('Processed', width, height)
 
     # loop forever
@@ -269,7 +269,7 @@ if __name__ == "__main__":
         temp_camera_index = vision_nt.getNumber("camera_index", 0)
         if temp_camera_index != camera_index:
             camera_index = temp_camera_index
-            input_stream = CameraServer.getInstance().getVideo(camera=cameras[camera_index])
+            input_stream = CameraServer.getInstance().getVideo(camera=cameras[int(camera_index)])
 
         frame_time, input_img = input_stream.grabFrame(input_img)
         output_img = np.copy(input_img)
@@ -287,7 +287,7 @@ if __name__ == "__main__":
         if camera_index == 0:
             binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
         elif camera_index == 1:
-            binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255))
+            binary_img = cv2.inRange(hsv_img, (20, 60, 130), (60, 255, 255))
 
         # outside:
         # binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255))
