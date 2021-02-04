@@ -38,7 +38,7 @@ public class RobotContainer {
 
   private final SpinToPort autoSpin = new SpinToPort(drivetrain);
   private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
-  private final GalacticSearch galactic = new GalacticSearch(turret, drivetrain, ballsuck);
+  private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);
   //  private final AutoGroup autoCommand = new AutoGroup(turret, drivetrain, ballsuck);
   //  private final AutoGroupFinal autoCommandFinal = new AutoGroupFinal(turret,drivetrain,ballsuck);

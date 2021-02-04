@@ -3,6 +3,7 @@ package frc.robot.commands.auto;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.MotorControlPID;
 import frc.robot.subsystems.BallSuck;
@@ -19,6 +20,7 @@ public class TrajectoryFollow extends CommandBase {
 
     private MotorControlPID leftPID, rightPID;
 
+    //this also means that the robot should drive backwards
     private boolean useIntake;
 
     //max distance (in meters) we can be in order for it to be valid.
@@ -42,9 +44,13 @@ public class TrajectoryFollow extends CommandBase {
         useIntake = false;
     }
 
-    TrajectoryFollow(Drivetrain drivetrain, Pose2d[] positions, BallSuck ballsuck){
+    TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck){
         this.drivetrain = drivetrain;
-        this.positions = positions;
+        Pose2d[] path = {
+            new Pose2d(0,0,new Rotation2d(0,0)),
+            new Pose2d(-1,0,new Rotation2d(0,0)),
+        };
+        this.positions = path;
         this.ballsuck = ballsuck;
         addRequirements(drivetrain);
 
@@ -53,8 +59,23 @@ public class TrajectoryFollow extends CommandBase {
         useIntake = true;
     }
 
+
     @Override
     public void initialize() {
+        index = 1;
+        drivetrain.resetOdometry(positions[0]);
+        finished = false;
+        leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
+        rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
+        if(useIntake && ballsuck != null){
+            ballsuck.turnOnIntake();
+            ballsuck.turnOnHandle();
+        }
+    }
+
+    public void updatePath(Pose2d[] newPath){
+        System.out.println("UPDATING PATH");
+        positions = newPath;
         index = 1;
         drivetrain.resetOdometry(positions[0]);
         finished = false;
@@ -84,13 +105,13 @@ public class TrajectoryFollow extends CommandBase {
             encoderScaler = -1.0;
         }
         //Set the "inside" wheel to spin at a slower rate (from above)
-        if(errors[3]<=0){
-            rightPID.setTarget(targetVelocity * encoderScaler);
-            leftPID.setTarget(targetVelocity);
+        if((!useIntake && errors[3]<=0) || (useIntake && errors[3]>=0)){
+            rightPID.setTarget(targetVelocity * encoderScaler * backwards());
+            leftPID.setTarget(targetVelocity * backwards());
         }
         else{
-            leftPID.setTarget(targetVelocity * encoderScaler);
-            rightPID.setTarget(targetVelocity);
+            leftPID.setTarget(targetVelocity * encoderScaler * backwards());
+            rightPID.setTarget(targetVelocity * backwards());
         }
 
         // if(Math.abs(errors[3])>=2*Math.PI/3){
@@ -131,8 +152,8 @@ public class TrajectoryFollow extends CommandBase {
 
     double[] errorFromPoint(Pose2d point){
         //calulate the distance we are away in each direction.
-        double errorX = point.getX() - drivetrain.getPose().getX();
-        double errorY = point.getY() - drivetrain.getPose().getY();
+        double errorX = (point.getX() - drivetrain.getPose().getX()) * backwards();
+        double errorY = (point.getY() - drivetrain.getPose().getY()) * backwards();
         //calculate the total distance using the pythagorean theorem.
         double distanceError = Math.sqrt(errorX * errorX + errorY * errorY);
         double robotAngle = drivetrain.getPose().getRotation().getRadians();
@@ -157,6 +178,10 @@ public class TrajectoryFollow extends CommandBase {
         //return the four errors as an array
         double[] error = {errorX, errorY, distanceError, angleError};
         return error;
+    }
+
+    public int backwards(){
+        return useIntake ? -1 : 1;
     }
 
     @Override
