@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.TrajectoryTest;
+import frc.robot.commands.auto.GalacticSearch;
 import frc.robot.commands.auto.SpinToPort;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,6 +38,7 @@ public class RobotContainer {
 
   private final SpinToPort autoSpin = new SpinToPort(drivetrain);
   private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
+  private final GalacticSearch galactic = new GalacticSearch(turret, drivetrain, ballsuck);
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);
   //  private final AutoGroup autoCommand = new AutoGroup(turret, drivetrain, ballsuck);
   //  private final AutoGroupFinal autoCommandFinal = new AutoGroupFinal(turret,drivetrain,ballsuck);
@@ -81,6 +83,6 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     // return autoCommand;
     // return driveTank;
-    return autoSpin;
+    return galactic;
   }
 }
