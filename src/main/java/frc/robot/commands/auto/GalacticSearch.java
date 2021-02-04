@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.Target;
 import frc.robot.subsystems.BallSuck;
 import frc.robot.subsystems.OldDrivetrain;
 import frc.robot.subsystems.Drivetrain;
@@ -28,6 +29,8 @@ public class GalacticSearch extends CommandBase {
 
     private final NetworkTable nt;
 
+    private final double xTolerance = 0.05;
+    private final double yTolerance = 0.05;
     /**
      * @param turret The Turret Subsystem {@link Turret} so that we can shoot balls
      * @param ballsuck The BallSuck Subsystem {@link BallSuck} so that we can SUCC balls
@@ -42,6 +45,16 @@ public class GalacticSearch extends CommandBase {
 
     @Override
     public void initialize(){
+      double[] area = nt.getEntry("area").getDoubleArray(new double[0]);
+        double[] x_pos = nt.getEntry("x_pos").getDoubleArray(new double[0]);
+        double[] y_pos = nt.getEntry("y_pos").getDoubleArray(new double[0]);
+        String[] locations = new String[area.length];
+        for(int i = 0; i<area.length; i++){
+            Target target =  new Target(x_pos[i],y_pos[i],area[i]);
+            if(Math.abs(target.x - 0.478)<xTolerance && Math.abs(target.y - 0.129)<yTolerance){
+              locations[i] = "D5";
+            }
+        }
     }
 
     Pose2d[] loadCSV(String path){
