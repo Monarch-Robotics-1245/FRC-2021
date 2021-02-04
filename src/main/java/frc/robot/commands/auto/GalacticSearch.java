@@ -7,12 +7,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.*;
 import edu.wpi.first.wpilibj.trajectory.*;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
@@ -21,24 +24,24 @@ import frc.robot.subsystems.OldDrivetrain;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
 
-public class GalacticSearch extends SequentialCommandGroup {
+public class GalacticSearch extends CommandBase {
+
+    private final NetworkTable nt;
+
     /**
      * @param turret The Turret Subsystem {@link Turret} so that we can shoot balls
      * @param ballsuck The BallSuck Subsystem {@link BallSuck} so that we can SUCC balls
      * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
     public GalacticSearch(Turret turret, Drivetrain drivetrain, BallSuck ballsuck){
-        Pose2d[] barrelWide = loadCSV("BarrelWide.csv");
-        addCommands(new TrajectoryFollow(drivetrain, barrelWide));
+      // Pose2d[] barrelWide = loadCSV("BarrelWide.csv");
+      // addCommands(new TrajectoryFollow(drivetrain, barrelWide));
+      NetworkTableInstance inst = NetworkTableInstance.getDefault();
+      nt = inst.getTable("Vision");
+    }
 
-        // Pose2d[] barrelFull = loadCSV("BarrelFull.csv");
-        // addCommands(new TrajectoryFollow(drivetrain, barrelFull));
-
-        // Pose2d[] slalom = loadCSV("Slalom.csv");
-        // addCommands(new TrajectoryFollow(drivetrain, slalom));
-        
-        // Pose2d[] circle = loadCSV("Circle.csv");
-        // addCommands(new TrajectoryFollow(drivetrain, circle));
+    @Override
+    public void initialize(){
     }
 
     Pose2d[] loadCSV(String path){
