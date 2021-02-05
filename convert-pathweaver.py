@@ -17,5 +17,4 @@ file = open("src/main/deploy/"+pathName+".csv", "w")
 for d in data:
     x = d['pose']['translation']['x'] - initialX
     y = d['pose']['translation']['y'] - initialY
-    rot = d['pose']['rotation']['radians']
-    file.write(str(x) + "," + str(y) + "," + str(rot) + "\n")
+    file.write(str(x) + "," + str(y) + ",1.0,0" + "\n")

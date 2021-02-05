@@ -106,12 +106,12 @@ public class TrajectoryFollow extends CommandBase {
         }
         //Set the "inside" wheel to spin at a slower rate (from above)
         if((!driveBackwards && errors[3]<=0) || (driveBackwards && errors[3]>=0)){
-            rightPID.setTarget(targetVelocity * encoderScaler * backwards());
-            leftPID.setTarget(targetVelocity * backwards());
+            rightPID.setTarget(targetVelocity * encoderScaler * backwards() * target.velocityScaler);
+            leftPID.setTarget(targetVelocity * backwards() * target.velocityScaler);
         }
         else{
-            leftPID.setTarget(targetVelocity * encoderScaler * backwards());
-            rightPID.setTarget(targetVelocity * backwards());
+            leftPID.setTarget(targetVelocity * encoderScaler * backwards() * target.velocityScaler);
+            rightPID.setTarget(targetVelocity * backwards() * target.velocityScaler);
         }
 
         // if(Math.abs(errors[3])>=2*Math.PI/3){
@@ -138,7 +138,7 @@ public class TrajectoryFollow extends CommandBase {
 
         //move the robot based on the speeds calculated above
         drivetrain.tankDrive(leftSpeed, rightSpeed);
-        if(useIntake){
+        if(useIntake && target.intake){
             ballsuck.turnOnIntake();
             ballsuck.turnOnHandle();
         }
