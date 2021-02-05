@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.PathPoint;
 import frc.robot.Target;
 import frc.robot.subsystems.BallSuck;
 import frc.robot.subsystems.OldDrivetrain;
@@ -106,43 +107,43 @@ public class GalacticSearch extends TrajectoryFollow {
         pathToFollow = 4;
       }
       nt.getEntry("to_follow").setNumber(pathToFollow);
-      Pose2d[] path = {
-        new Pose2d(0,0,new Rotation2d(0,0)),
-        new Pose2d(-1,0,new Rotation2d(0,0)),
+      PathPoint[] path = {
+        new PathPoint(0,0),
+        new PathPoint(-1,0),
       };
       // path = loadCSV("GalacticARed.csv");
       if(pathToFollow==1){
-        path = loadCSV("GalacticARed.csv");
+        path = loadCSV("GalacticARed.csv",true);
       }
       else if(pathToFollow==2){
-        path = loadCSV("GalacticBRed.csv");
+        path = loadCSV("GalacticBRed.csv",true);
       }
       else if(pathToFollow==3){
-        path = loadCSV("GalacticABlue.csv");
+        path = loadCSV("GalacticABlue.csv",true);
       }
       else if(pathToFollow==4){
-        path = loadCSV("GalacticBBlue.csv");
+        path = loadCSV("GalacticBBlue.csv",true);
       }
       super.updatePath(path);
     }
 
-    Pose2d[] loadCSV(String path){
-        ArrayList<Pose2d> poseList = new ArrayList<Pose2d>();
-        Path filePath = Filesystem.getDeployDirectory().toPath().resolve(path);
-        try {
-          BufferedReader reader = Files.newBufferedReader(filePath);
-          String line;
-          while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(",");
-            Pose2d newPose = new Pose2d(Double.parseDouble(parts[0]) * -1, Double.parseDouble(parts[1]) * -1, new Rotation2d(0));
-            poseList.add(newPose);
-            // System.out.println(newPose);
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
+    PathPoint[] loadCSV(String path, boolean backwards){
+      ArrayList<PathPoint> poseList = new ArrayList<PathPoint>();
+      Path filePath = Filesystem.getDeployDirectory().toPath().resolve(path);
+      try {
+        BufferedReader reader = Files.newBufferedReader(filePath);
+        String line;
+        while ((line = reader.readLine()) != null) {
+          String[] parts = line.split(",");
+          PathPoint newPose = new PathPoint(Double.parseDouble(parts[0]) * (backwards ? -1 : 1), Double.parseDouble(parts[1]) * (backwards ? -1 : 1));
+          poseList.add(newPose);
+          // System.out.println(newPose);
         }
-        Pose2d[] positions = new Pose2d[poseList.size()]; 
-        positions = poseList.toArray(positions);
-        return positions;
-    }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      PathPoint[] positions = new PathPoint[poseList.size()]; 
+      positions = poseList.toArray(positions);
+      return positions;
+  }
 }
