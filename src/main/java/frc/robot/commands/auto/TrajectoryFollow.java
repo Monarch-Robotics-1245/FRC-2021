@@ -20,8 +20,9 @@ public class TrajectoryFollow extends CommandBase {
 
     private MotorControlPID leftPID, rightPID;
 
-    //this also means that the robot should drive backwards
     private boolean useIntake;
+
+    private boolean driveBackwards;
 
     //max distance (in meters) we can be in order for it to be valid.
     final double maxErrorDistance = 0.5;
@@ -35,6 +36,10 @@ public class TrajectoryFollow extends CommandBase {
     private NetworkTable nt;
 
     TrajectoryFollow(Drivetrain drivetrain, Pose2d[] positions){
+        this(drivetrain,positions,false);
+    }
+
+    TrajectoryFollow(Drivetrain drivetrain, Pose2d[] positions, boolean backwards){
         this.drivetrain = drivetrain;
         this.positions = positions;
         addRequirements(drivetrain);
@@ -42,6 +47,7 @@ public class TrajectoryFollow extends CommandBase {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         nt = inst.getTable("PathFollowing");
         useIntake = false;
+        driveBackwards = backwards;
     }
 
     TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck){
@@ -57,6 +63,7 @@ public class TrajectoryFollow extends CommandBase {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         nt = inst.getTable("PathFollowing");
         useIntake = true;
+        driveBackwards = true;
     }
 
 
@@ -67,10 +74,6 @@ public class TrajectoryFollow extends CommandBase {
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
-        // if(useIntake && ballsuck != null){
-        //     ballsuck.turnOnIntake();
-        //     ballsuck.turnOnHandle();
-        // }
     }
 
     public void updatePath(Pose2d[] newPath){
@@ -81,10 +84,6 @@ public class TrajectoryFollow extends CommandBase {
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
-        // if(useIntake && ballsuck != null){
-        //     ballsuck.turnOnIntake();
-        //     ballsuck.turnOnHandle();
-        // }
     }
 
     @Override
@@ -105,7 +104,7 @@ public class TrajectoryFollow extends CommandBase {
             encoderScaler = -1.0;
         }
         //Set the "inside" wheel to spin at a slower rate (from above)
-        if((!useIntake && errors[3]<=0) || (useIntake && errors[3]>=0)){
+        if((!driveBackwards && errors[3]<=0) || (driveBackwards && errors[3]>=0)){
             rightPID.setTarget(targetVelocity * encoderScaler * backwards());
             leftPID.setTarget(targetVelocity * backwards());
         }
@@ -185,7 +184,7 @@ public class TrajectoryFollow extends CommandBase {
     }
 
     public int backwards(){
-        return useIntake ? -1 : 1;
+        return driveBackwards ? -1 : 1;
     }
 
     @Override
@@ -197,9 +196,9 @@ public class TrajectoryFollow extends CommandBase {
     public void end(boolean interrupted) {
         drivetrain.tankDriveVolts(0, 0);
         System.out.println("DONE WITH ALIGN");
-        // if(useIntake){
-        //     ballsuck.turnOffIntake();
-        //     ballsuck.turnOffHandle();
-        // }
+        if(useIntake){
+            ballsuck.turnOffIntake();
+            ballsuck.turnOffHandle();
+        }
     }
 }
