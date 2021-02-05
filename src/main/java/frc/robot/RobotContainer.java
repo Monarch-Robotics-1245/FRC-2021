@@ -83,6 +83,6 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     // return autoCommand;
     // return driveTank;
-    return galactic;
+    return autoTrajectoryTest;
   }
 }

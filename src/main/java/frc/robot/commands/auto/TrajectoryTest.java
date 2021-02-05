@@ -29,13 +29,13 @@ public class TrajectoryTest extends SequentialCommandGroup {
      * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
     public TrajectoryTest(Turret turret, Drivetrain drivetrain, BallSuck ballsuck){
-      PathPoint[] barrelWide = loadCSV("BarrelWide.csv");
-        addCommands(new TrajectoryFollow(drivetrain, barrelWide));
+      // PathPoint[] barrelWide = loadCSV("BarrelWide.csv");
+      //   addCommands(new TrajectoryFollow(drivetrain, barrelWide));
 
-        // Pose2d[] barrelFull = loadCSV("BarrelFull.csv");
+        // PathPoint[] barrelFull = loadCSV("BarrelFull.csv");
         // addCommands(new TrajectoryFollow(drivetrain, barrelFull));
 
-        // Pose2d[] slalom = loadCSV("Slalom.csv");
+        PathPoint[] slalom = loadCSV("Slalom.csv");
         // addCommands(new TrajectoryFollow(drivetrain, slalom));
 
         PathPoint[] bounce1 = loadCSV("Bounce1.csv"),
