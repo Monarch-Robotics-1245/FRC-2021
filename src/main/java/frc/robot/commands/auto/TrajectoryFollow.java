@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.MotorControlPID;
+import frc.robot.PathPoint;
 import frc.robot.subsystems.BallSuck;
 import frc.robot.subsystems.Drivetrain;
 
@@ -13,7 +14,7 @@ public class TrajectoryFollow extends CommandBase {
 
     Drivetrain drivetrain;
     BallSuck ballsuck;
-    Pose2d[] positions;
+    PathPoint[] positions;
 
     int index;
     boolean finished;
@@ -35,11 +36,11 @@ public class TrajectoryFollow extends CommandBase {
     
     private NetworkTable nt;
 
-    TrajectoryFollow(Drivetrain drivetrain, Pose2d[] positions){
+    TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions){
         this(drivetrain,positions,false);
     }
 
-    TrajectoryFollow(Drivetrain drivetrain, Pose2d[] positions, boolean backwards){
+    TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards){
         this.drivetrain = drivetrain;
         this.positions = positions;
         addRequirements(drivetrain);
@@ -52,9 +53,9 @@ public class TrajectoryFollow extends CommandBase {
 
     TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck){
         this.drivetrain = drivetrain;
-        Pose2d[] path = {
-            new Pose2d(0,0,new Rotation2d(0,0)),
-            new Pose2d(-1,0,new Rotation2d(0,0)),
+        PathPoint[] path = {
+            new PathPoint(0,0),
+            new PathPoint(-1,0),
         };
         this.positions = path;
         this.ballsuck = ballsuck;
@@ -70,17 +71,17 @@ public class TrajectoryFollow extends CommandBase {
     @Override
     public void initialize() {
         index = 1;
-        drivetrain.resetOdometry(positions[0]);
+        drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(0)));
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
     }
 
-    public void updatePath(Pose2d[] newPath){
+    public void updatePath(PathPoint[] newPath){
         System.out.println("UPDATING PATH");
         positions = newPath;
         index = 1;
-        drivetrain.resetOdometry(positions[0]);
+        drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(0)));
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
@@ -89,7 +90,7 @@ public class TrajectoryFollow extends CommandBase {
     @Override
     public void execute() {
         //Get the current position the robot is trying to get to.
-        Pose2d target = positions[index];
+        PathPoint target = positions[index];
         //Get the error in the X (index 0), Y (index 1), total distance (index 3), and rotation (index 4)
         double[] errors = errorFromPoint(target);
         //Get the values of each encoder
@@ -153,10 +154,10 @@ public class TrajectoryFollow extends CommandBase {
         }
     }
 
-    double[] errorFromPoint(Pose2d point){
+    double[] errorFromPoint(PathPoint point){
         //calulate the distance we are away in each direction.
-        double errorX = (point.getX() - drivetrain.getPose().getX()) * backwards();
-        double errorY = (point.getY() - drivetrain.getPose().getY()) * backwards();
+        double errorX = (point.x - drivetrain.getPose().getX()) * backwards();
+        double errorY = (point.y - drivetrain.getPose().getY()) * backwards();
         //calculate the total distance using the pythagorean theorem.
         double distanceError = Math.sqrt(errorX * errorX + errorY * errorY);
         double robotAngle = drivetrain.getPose().getRotation().getRadians();

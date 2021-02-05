@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConst
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.PathPoint;
 import frc.robot.subsystems.BallSuck;
 import frc.robot.subsystems.OldDrivetrain;
 import frc.robot.subsystems.Drivetrain;
@@ -28,7 +29,7 @@ public class TrajectoryTest extends SequentialCommandGroup {
      * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
     public TrajectoryTest(Turret turret, Drivetrain drivetrain, BallSuck ballsuck){
-        Pose2d[] barrelWide = loadCSV("BarrelWide.csv");
+      PathPoint[] barrelWide = loadCSV("BarrelWide.csv");
         addCommands(new TrajectoryFollow(drivetrain, barrelWide));
 
         // Pose2d[] barrelFull = loadCSV("BarrelFull.csv");
@@ -37,7 +38,7 @@ public class TrajectoryTest extends SequentialCommandGroup {
         // Pose2d[] slalom = loadCSV("Slalom.csv");
         // addCommands(new TrajectoryFollow(drivetrain, slalom));
 
-        Pose2d[] bounce1 = loadCSV("Bounce1.csv"),
+        PathPoint[] bounce1 = loadCSV("Bounce1.csv"),
         bounce2 = loadCSV("Bounce2.csv",true), 
         bounce3 = loadCSV("Bounce3.csv"),
         bounce4 = loadCSV("Bounce4.csv", true);
@@ -49,27 +50,27 @@ public class TrajectoryTest extends SequentialCommandGroup {
         );
     }
 
-    Pose2d[] loadCSV(String path){
+    PathPoint[] loadCSV(String path){
         return loadCSV(path,false);
     }
 
 
-    Pose2d[] loadCSV(String path, boolean backwards){
-      ArrayList<Pose2d> poseList = new ArrayList<Pose2d>();
+    PathPoint[] loadCSV(String path, boolean backwards){
+      ArrayList<PathPoint> poseList = new ArrayList<PathPoint>();
       Path filePath = Filesystem.getDeployDirectory().toPath().resolve(path);
       try {
         BufferedReader reader = Files.newBufferedReader(filePath);
         String line;
         while ((line = reader.readLine()) != null) {
           String[] parts = line.split(",");
-          Pose2d newPose = new Pose2d(Double.parseDouble(parts[0]) * (backwards ? -1 : 1), Double.parseDouble(parts[1]) * (backwards ? -1 : 1), new Rotation2d(0));
+          PathPoint newPose = new PathPoint(Double.parseDouble(parts[0]) * (backwards ? -1 : 1), Double.parseDouble(parts[1]) * (backwards ? -1 : 1));
           poseList.add(newPose);
           // System.out.println(newPose);
         }
       } catch (IOException e) {
         e.printStackTrace();
       }
-      Pose2d[] positions = new Pose2d[poseList.size()]; 
+      PathPoint[] positions = new PathPoint[poseList.size()]; 
       positions = poseList.toArray(positions);
       return positions;
   }
