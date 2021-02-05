@@ -30,7 +30,7 @@ public class TrajectoryFollow extends CommandBase {
     final double maxErrorRotation =0.5;
 
     //meters per second.
-    final double targetVelocity = 3.0;
+    final double targetVelocity = 1.3;
     
     private NetworkTable nt;
 
@@ -52,7 +52,7 @@ public class TrajectoryFollow extends CommandBase {
         };
         this.positions = path;
         this.ballsuck = ballsuck;
-        addRequirements(drivetrain);
+        addRequirements(drivetrain,ballsuck);
 
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         nt = inst.getTable("PathFollowing");
@@ -67,10 +67,10 @@ public class TrajectoryFollow extends CommandBase {
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
-        if(useIntake && ballsuck != null){
-            ballsuck.turnOnIntake();
-            ballsuck.turnOnHandle();
-        }
+        // if(useIntake && ballsuck != null){
+        //     ballsuck.turnOnIntake();
+        //     ballsuck.turnOnHandle();
+        // }
     }
 
     public void updatePath(Pose2d[] newPath){
@@ -81,10 +81,10 @@ public class TrajectoryFollow extends CommandBase {
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
-        if(useIntake && ballsuck != null){
-            ballsuck.turnOnIntake();
-            ballsuck.turnOnHandle();
-        }
+        // if(useIntake && ballsuck != null){
+        //     ballsuck.turnOnIntake();
+        //     ballsuck.turnOnHandle();
+        // }
     }
 
     @Override
@@ -138,6 +138,10 @@ public class TrajectoryFollow extends CommandBase {
 
         //move the robot based on the speeds calculated above
         drivetrain.tankDrive(leftSpeed, rightSpeed);
+        if(useIntake){
+            ballsuck.turnOnIntake();
+            ballsuck.turnOnHandle();
+        }
 
         //If we are close to the target point, advance to the next index. If it is the last point, finish the command.
         if(errors[2]<maxErrorDistance){
@@ -193,9 +197,9 @@ public class TrajectoryFollow extends CommandBase {
     public void end(boolean interrupted) {
         drivetrain.tankDriveVolts(0, 0);
         System.out.println("DONE WITH ALIGN");
-        if(useIntake && ballsuck != null){
-            ballsuck.turnOffIntake();
-            ballsuck.turnOffHandle();
-        }
+        // if(useIntake){
+        //     ballsuck.turnOffIntake();
+        //     ballsuck.turnOffHandle();
+        // }
     }
 }

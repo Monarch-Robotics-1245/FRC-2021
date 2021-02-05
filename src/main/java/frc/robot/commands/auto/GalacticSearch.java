@@ -30,8 +30,8 @@ public class GalacticSearch extends TrajectoryFollow {
 
     private final NetworkTable nt;
 
-    private final double xTolerance = 0.05;
-    private final double yTolerance = 0.05;
+    private final double xTolerance = 0.1;
+    private final double yTolerance = 0.1;
     /**
      * @param turret The Turret Subsystem {@link Turret} so that we can shoot balls
      * @param ballsuck The BallSuck Subsystem {@link BallSuck} so that we can SUCC balls
@@ -94,13 +94,13 @@ public class GalacticSearch extends TrajectoryFollow {
         }
       }
       else if(Arrays.asList(locations).indexOf("E6")>=0
-        || Arrays.asList(locations).indexOf("B7")>=0
+        // || Arrays.asList(locations).indexOf("B7")>=0
         || Arrays.asList(locations).indexOf("C9")>=0
       ){
         pathToFollow = 3;
       }
       else if(Arrays.asList(locations).indexOf("D6")>=0
-        || Arrays.asList(locations).indexOf("B8")>=0
+        // || Arrays.asList(locations).indexOf("B8")>=0
         || Arrays.asList(locations).indexOf("D10")>=0
       ){
         pathToFollow = 4;
@@ -110,6 +110,7 @@ public class GalacticSearch extends TrajectoryFollow {
         new Pose2d(0,0,new Rotation2d(0,0)),
         new Pose2d(-1,0,new Rotation2d(0,0)),
       };
+      // path = loadCSV("GalacticARed.csv");
       if(pathToFollow==1){
         path = loadCSV("GalacticARed.csv");
       }
