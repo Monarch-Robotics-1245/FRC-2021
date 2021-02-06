@@ -137,9 +137,9 @@ public class GalacticSearch extends TrajectoryFollow {
           String[] parts = line.split(",");
           double x = Double.parseDouble(parts[0]) * (backwards ? -1 : 1);
           double y = Double.parseDouble(parts[1]) * (backwards ? -1 : 1);
-          double velocityScaler = Double.parseDouble(parts[2]);
+          double velocityScalar = Double.parseDouble(parts[2]);
           boolean intake = Integer.parseInt(parts[3]) == 1;
-          PathPoint newPose = new PathPoint(x,y, velocityScaler, intake);
+          PathPoint newPose = new PathPoint(x,y, velocityScalar, intake);
           poseList.add(newPose);
           // System.out.println(newPose);
         }

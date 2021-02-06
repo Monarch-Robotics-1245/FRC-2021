@@ -34,13 +34,18 @@ public class TrajectoryFollow extends CommandBase {
     //meters per second.
     final double targetVelocity = 1.3;
     
+    public double initialRotation;
+    
     private NetworkTable nt;
 
     TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions){
         this(drivetrain,positions,false);
     }
-
     TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards){
+        this(drivetrain,positions,false,0);
+    }
+
+    TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards, double initialRotation){
         this.drivetrain = drivetrain;
         this.positions = positions;
         addRequirements(drivetrain);
@@ -49,9 +54,14 @@ public class TrajectoryFollow extends CommandBase {
         nt = inst.getTable("PathFollowing");
         useIntake = false;
         driveBackwards = backwards;
+        this.initialRotation = initialRotation;
     }
 
     TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck){
+        this(drivetrain,ballsuck,0.0);
+    }
+    TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck, double initialRotation){
+        this.initialRotation = initialRotation;
         this.drivetrain = drivetrain;
         PathPoint[] path = {
             new PathPoint(0,0),
@@ -97,21 +107,21 @@ public class TrajectoryFollow extends CommandBase {
         double[] encoders = { drivetrain.getLeftEncoder().getRate(), drivetrain.getRightEncoder().getRate() };
 
         //Calulate how fast the "inside" wheel should spin based on how far we should
-        double encoderScaler = 1 - Math.abs(errors[3]);
+        double encoderScalar = 1 - Math.abs(errors[3]);
         // if(Math.abs(errors[3])>=3*Math.PI/4 && errors[2] > 0.5){
-        //  encoderScaler = 1 - Math.PI + Math.abs(errors[3]);
+        //  encoderScalar = 1 - Math.PI + Math.abs(errors[3]);
         // } 
-        if(encoderScaler<-1.0){
-            encoderScaler = -1.0;
+        if(encoderScalar<-1.0){
+            encoderScalar = -1.0;
         }
         //Set the "inside" wheel to spin at a slower rate (from above)
         if((!driveBackwards && errors[3]<=0) || (driveBackwards && errors[3]>=0)){
-            rightPID.setTarget(targetVelocity * encoderScaler * backwards() * target.velocityScaler);
-            leftPID.setTarget(targetVelocity * backwards() * target.velocityScaler);
+            rightPID.setTarget(targetVelocity * encoderScalar * backwards() * target.velocityScalar);
+            leftPID.setTarget(targetVelocity * backwards() * target.velocityScalar);
         }
         else{
-            leftPID.setTarget(targetVelocity * encoderScaler * backwards() * target.velocityScaler);
-            rightPID.setTarget(targetVelocity * backwards() * target.velocityScaler);
+            leftPID.setTarget(targetVelocity * encoderScalar * backwards() * target.velocityScalar);
+            rightPID.setTarget(targetVelocity * backwards() * target.velocityScalar);
         }
 
         // if(Math.abs(errors[3])>=2*Math.PI/3){
@@ -134,13 +144,20 @@ public class TrajectoryFollow extends CommandBase {
         nt.getEntry("errorAngle").setDouble(errors[3]);
         nt.getEntry("leftSpeed").setDouble(leftSpeed);
         nt.getEntry("rightSpeed").setDouble(rightSpeed);
-
+        nt.getEntry("velocityScalar").setDouble(target.velocityScalar);
+        nt.getEntry("useIntake").setBoolean(target.intake);
 
         //move the robot based on the speeds calculated above
         drivetrain.tankDrive(leftSpeed, rightSpeed);
-        if(useIntake && target.intake){
-            ballsuck.turnOnIntake();
-            ballsuck.turnOnHandle();
+        if(useIntake){
+            if(target.intake){
+                ballsuck.turnOnIntake();
+                ballsuck.turnOnHandle();
+            }
+            else{
+                ballsuck.turnOffIntake();
+                ballsuck.turnOffHandle();
+            }
         }
 
         //If we are close to the target point, advance to the next index. If it is the last point, finish the command.

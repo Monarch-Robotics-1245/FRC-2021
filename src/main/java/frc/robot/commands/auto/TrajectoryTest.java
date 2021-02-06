@@ -43,10 +43,10 @@ public class TrajectoryTest extends SequentialCommandGroup {
         bounce3 = loadCSV("Bounce3.csv"),
         bounce4 = loadCSV("Bounce4.csv", true);
         addCommands(
-          new TrajectoryFollow(drivetrain,bounce1,false),
-          new TrajectoryFollow(drivetrain,bounce2,true),
-          new TrajectoryFollow(drivetrain,bounce3,false),
-          new TrajectoryFollow(drivetrain,bounce4,true)
+          new TrajectoryFollow(drivetrain,bounce1,false,0),
+          new TrajectoryFollow(drivetrain,bounce2,true,90),
+          new TrajectoryFollow(drivetrain,bounce3,false,90),
+          new TrajectoryFollow(drivetrain,bounce4,true,90)
         );
     }
 
