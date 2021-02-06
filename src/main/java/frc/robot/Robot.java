@@ -50,8 +50,6 @@ public class Robot extends TimedRobot {
 
   public static boolean canShootAuto = true;
 
-  public int cameraIndex;
-
   Preferences prefs;
 
   /**
@@ -72,15 +70,15 @@ public class Robot extends TimedRobot {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     nt = inst.getTable("Vision");
     nt.getEntry("camera_index").setNumber(0);
-
-    cameraIndex = 0;
   
     canShootAuto = true;
 
     // SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
     
     prefs = Preferences.getInstance();
-    prefs.putInt("AutoMode", AutoMode.none);
+    if(!prefs.containsKey("AutoMode")){
+      prefs.putInt("AutoMode", AutoMode.none);
+    }
   }
 
   /**
@@ -101,7 +99,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     if(OI.leftJoystick.getRawButtonPressed(8)){
-      cameraIndex = (cameraIndex + 1) % 2;
+      int cameraIndex = ((int)(nt.getEntry("camera_index").getNumber(0)) + 1) % 2;
       nt.getEntry("camera_index").setNumber(cameraIndex);
     }
   }

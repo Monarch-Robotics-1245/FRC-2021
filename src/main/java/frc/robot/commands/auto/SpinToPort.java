@@ -43,6 +43,7 @@ public class SpinToPort extends CommandBase {
      */
     @Override
     public void initialize() {
+        nt.getEntry("camera_index").setNumber(0);
         Robot.canShootAuto = false;
         spinSpeed = 0;
         encoderSpinControlLeft = new MotorControlPID(0.0,1.0,0.8,0.05,0.0005);
