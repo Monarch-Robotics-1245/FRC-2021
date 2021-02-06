@@ -38,14 +38,14 @@ public class TrajectoryFollow extends CommandBase {
     
     private NetworkTable nt;
 
-    TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions){
+    public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions){
         this(drivetrain,positions,false);
     }
-    TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards){
+    public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards){
         this(drivetrain,positions,false,0);
     }
 
-    TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards, double initialRotation){
+    public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards, double initialRotation){
         this.drivetrain = drivetrain;
         this.positions = positions;
         addRequirements(drivetrain);
@@ -57,10 +57,10 @@ public class TrajectoryFollow extends CommandBase {
         this.initialRotation = initialRotation;
     }
 
-    TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck){
+    public TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck){
         this(drivetrain,ballsuck,0.0);
     }
-    TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck, double initialRotation){
+    public TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck, double initialRotation){
         this.initialRotation = initialRotation;
         this.drivetrain = drivetrain;
         PathPoint[] path = {

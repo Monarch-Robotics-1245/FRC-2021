@@ -11,10 +11,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.TrajectoryTest;
+import frc.robot.enums.AutoMode;
 import frc.robot.commands.auto.GalacticSearch;
 import frc.robot.commands.auto.SpinToPort;
+import frc.robot.commands.auto.TrajectoryFollow;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 
 /**
@@ -79,10 +82,42 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Command getAutonomousCommand(int mode) {
+    PathPoint[] path;
+    Command cmd;
+    switch(mode){
+      case AutoMode.galactic:
+        cmd = new GalacticSearch(drivetrain, ballsuck);
+        break;
+      case AutoMode.barrel:
+        path = PathPoint.loadCSV("BarrelWide.csv");
+        cmd = new TrajectoryFollow(drivetrain, path);
+        break;
+      case AutoMode.slalom:
+        path = PathPoint.loadCSV("Slalom.csv");
+        cmd = new TrajectoryFollow(drivetrain, path);
+        break;
+      case AutoMode.bounce:
+        PathPoint[] bounce1 = PathPoint.loadCSV("Bounce1.csv"),
+        bounce2 = PathPoint.loadCSV("Bounce2.csv",true), 
+        bounce3 = PathPoint.loadCSV("Bounce3.csv"),
+        bounce4 = PathPoint.loadCSV("Bounce4.csv", true);
+        cmd = new SequentialCommandGroup(
+          new TrajectoryFollow(drivetrain,bounce1,false,0),
+          new TrajectoryFollow(drivetrain,bounce2,true,90),
+          new TrajectoryFollow(drivetrain,bounce3,false,90),
+          new TrajectoryFollow(drivetrain,bounce4,true,90)
+        );
+      case AutoMode.none:
+        cmd =  new SequentialCommandGroup();
+        break;
+      default:
+        cmd =  new SequentialCommandGroup();
+    }
+    return cmd;
     // An ExampleCommand will run in autonomous
     // return autoCommand;
     // return driveTank;
-    return autoTrajectoryTest;
+    // return autoTrajectoryTest;
   }
 }

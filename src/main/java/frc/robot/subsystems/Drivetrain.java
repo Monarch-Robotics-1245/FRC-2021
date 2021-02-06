@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.DriveTank;
@@ -52,6 +53,8 @@ public class Drivetrain extends SubsystemBase {
     
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     nt = inst.getTable("Position");
+
+    SmartDashboard.putData("DrivetrainSystem", this);
   }
 
   @Override

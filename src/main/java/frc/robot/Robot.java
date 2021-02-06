@@ -10,6 +10,8 @@ package frc.robot;
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.enums.AutoMode;
 import frc.robot.enums.WheelManipulatorState;
 import frc.robot.subsystems.WheelManipulator;
 
@@ -50,6 +52,8 @@ public class Robot extends TimedRobot {
 
   public int cameraIndex;
 
+  Preferences prefs;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -72,6 +76,11 @@ public class Robot extends TimedRobot {
     cameraIndex = 0;
   
     canShootAuto = true;
+
+    // SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
+    
+    prefs = Preferences.getInstance();
+    prefs.putInt("AutoMode", AutoMode.none);
   }
 
   /**
@@ -83,6 +92,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    PowerDistributionPanel pdp = new PowerDistributionPanel(0);
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -112,7 +122,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(prefs.getInt("AutoMode", AutoMode.none));
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
