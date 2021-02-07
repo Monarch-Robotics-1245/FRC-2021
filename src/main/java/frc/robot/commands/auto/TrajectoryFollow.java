@@ -173,11 +173,11 @@ public class TrajectoryFollow extends CommandBase {
 
     double[] errorFromPoint(PathPoint point){
         //calulate the distance we are away in each direction.
-        double errorX = (point.x - drivetrain.getPose().getX()) * backwards();
-        double errorY = (point.y - drivetrain.getPose().getY()) * backwards();
+        double errorX = (point.x - drivetrain.getPathPose().getX()) * backwards();
+        double errorY = (point.y - drivetrain.getPathPose().getY()) * backwards();
         //calculate the total distance using the pythagorean theorem.
         double distanceError = Math.sqrt(errorX * errorX + errorY * errorY);
-        double robotAngle = drivetrain.getPose().getRotation().getRadians();
+        double robotAngle = drivetrain.getPathPose().getRotation().getRadians();
         double robotX = Math.cos(robotAngle);
         double robotY = Math.sin(robotAngle);
         if(distanceError==0){

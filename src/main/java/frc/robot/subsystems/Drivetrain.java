@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,7 +37,10 @@ public class Drivetrain extends SubsystemBase {
   private DigitalInput autoSwitch = new DigitalInput(9);
 
   // Odometry class for tracking robot position
-  private final DifferentialDriveOdometry odometry;
+  private final DifferentialDriveOdometry odometryPath;
+  private final DifferentialDriveOdometry odometryOverall;
+
+  private double leftPathOffset, rightPathOffset;
 
   private NetworkTable nt;
 
@@ -47,7 +51,10 @@ public class Drivetrain extends SubsystemBase {
     rightEncoder.setDistancePerPulse(0.1905*Math.PI/2048.0);
 
     resetEncoders();
-    odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+    leftPathOffset = 0.0;
+    rightPathOffset = 0.0;
+    odometryPath = new DifferentialDriveOdometry(gyro.getRotation2d());
+    odometryOverall = new DifferentialDriveOdometry(gyro.getRotation2d());
     //link the command to the subsystem
     setDefaultCommand(new DriveTank(this));
     
@@ -60,20 +67,38 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    odometry.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
-    Pose2d position = odometry.getPoseMeters();
-    double x = position.getX();
-    double y = position.getY();
-    double rotation = position.getRotation().getDegrees();
+    //OLD:
+    odometryPath.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
+    //NEW:
+    // odometryPath.update(gyro.getRotation2d(), leftEncoder.getDistance() - leftPathOffset, rightEncoder.getDistance() - rightPathOffset);
+    
+    odometryOverall.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
 
-    nt.getEntry("x").setDouble(x);
-    nt.getEntry("y").setDouble(y);
-    nt.getEntry("rotation").setDouble(rotation);
+
+    Pose2d positionPath = odometryPath.getPoseMeters();
+    double xPath = positionPath.getX();
+    double yPath = positionPath.getY();
+    double rotationPath = positionPath.getRotation().getDegrees();
+    nt.getEntry("x_path").setDouble(xPath);
+    nt.getEntry("y_path").setDouble(yPath);
+    nt.getEntry("r_path").setDouble(rotationPath);
+    
+    Pose2d positionOverall = odometryOverall.getPoseMeters();
+    double xOverall = positionOverall.getX();
+    double yOverall = positionOverall.getY();
+    double rotationOverall = positionOverall.getRotation().getDegrees();
+    nt.getEntry("x_overall").setDouble(xOverall);
+    nt.getEntry("y_overall").setDouble(yOverall);
+    nt.getEntry("r_overall").setDouble(rotationOverall);
   }
 
   // Returns the currently-estimated pose of the robot.
-  public Pose2d getPose() {
-    return odometry.getPoseMeters();
+  public Pose2d getPathPose() {
+    return odometryPath.getPoseMeters();
+  }
+
+  public Pose2d getOverallPose() {
+    return odometryOverall.getPoseMeters();
   }
 
   // Returns the current wheel speeds of the robot.
@@ -83,8 +108,13 @@ public class Drivetrain extends SubsystemBase {
 
   // Resets the odometry to the specified pose.
   public void resetOdometry(Pose2d pose) {
+    //OLD:
     resetEncoders();
-    odometry.resetPosition(pose, gyro.getRotation2d());
+    //NEW: 
+    // leftPathOffset = leftEncoder.getDistance();
+    // rightPathOffset = rightEncoder.getDistance();
+
+    odometryPath.resetPosition(pose, gyro.getRotation2d());
   }
 
   // Controls the left and right sides of the drive directly with voltages.
