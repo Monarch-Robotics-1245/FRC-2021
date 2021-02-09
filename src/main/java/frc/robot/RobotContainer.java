@@ -42,6 +42,9 @@ public class RobotContainer {
   private final SpinToPort autoSpin = new SpinToPort(drivetrain);
   private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
   private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
+
+  PathPoint[] path = PathPoint.loadCSV("Slalom.csv");
+  Command cmd = new TrajectoryFollow(drivetrain, path);
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);
   //  private final AutoGroup autoCommand = new AutoGroup(turret, drivetrain, ballsuck);
   //  private final AutoGroupFinal autoCommandFinal = new AutoGroupFinal(turret,drivetrain,ballsuck);
@@ -83,11 +86,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(int mode) {
-    PathPoint[] path;
-    
-    Command cmd;
-    path = PathPoint.loadCSV("BarrelWide.csv");
-    cmd = new TrajectoryFollow(drivetrain, path);
     return cmd;
 
     // switch(mode){

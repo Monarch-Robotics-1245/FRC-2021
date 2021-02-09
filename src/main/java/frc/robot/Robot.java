@@ -75,10 +75,10 @@ public class Robot extends TimedRobot {
 
     // SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
     
-    prefs = Preferences.getInstance();
-    if(!prefs.containsKey("AutoMode")){
-      prefs.putInt("AutoMode", AutoMode.none);
-    }
+    // prefs = Preferences.getInstance();
+    // if(!prefs.containsKey("AutoMode")){
+    //   prefs.putInt("AutoMode", AutoMode.none);
+    // }
   }
 
   /**
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    PowerDistributionPanel pdp = new PowerDistributionPanel(0);
+    // PowerDistributionPanel pdp = new PowerDistributionPanel(0);
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -120,7 +120,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(prefs.getInt("AutoMode", AutoMode.none));
+    //prefs.getInt("AutoMode", AutoMode.none)
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(0);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

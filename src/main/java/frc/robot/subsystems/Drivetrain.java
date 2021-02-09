@@ -38,7 +38,7 @@ public class Drivetrain extends SubsystemBase {
 
   // Odometry class for tracking robot position
   private final DifferentialDriveOdometry odometryPath;
-  private final DifferentialDriveOdometry odometryOverall;
+  // private final DifferentialDriveOdometry odometryOverall;
 
   private double leftPathOffset, rightPathOffset;
 
@@ -54,7 +54,7 @@ public class Drivetrain extends SubsystemBase {
     leftPathOffset = 0.0;
     rightPathOffset = 0.0;
     odometryPath = new DifferentialDriveOdometry(gyro.getRotation2d());
-    odometryOverall = new DifferentialDriveOdometry(gyro.getRotation2d());
+    // odometryOverall = new DifferentialDriveOdometry(gyro.getRotation2d());
     //link the command to the subsystem
     setDefaultCommand(new DriveTank(this));
     
@@ -72,24 +72,24 @@ public class Drivetrain extends SubsystemBase {
     //NEW:
     // odometryPath.update(gyro.getRotation2d(), leftEncoder.getDistance() - leftPathOffset, rightEncoder.getDistance() - rightPathOffset);
     
-    odometryOverall.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
+    // odometryOverall.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
 
 
-    Pose2d positionPath = odometryPath.getPoseMeters();
-    double xPath = positionPath.getX();
-    double yPath = positionPath.getY();
-    double rotationPath = positionPath.getRotation().getDegrees();
-    nt.getEntry("x_path").setDouble(xPath);
-    nt.getEntry("y_path").setDouble(yPath);
-    nt.getEntry("r_path").setDouble(rotationPath);
+    // Pose2d positionPath = odometryPath.getPoseMeters();
+    // double xPath = positionPath.getX();
+    // double yPath = positionPath.getY();
+    // double rotationPath = positionPath.getRotation().getDegrees();
+    // nt.getEntry("x_path").setDouble(xPath);
+    // nt.getEntry("y_path").setDouble(yPath);
+    // nt.getEntry("r_path").setDouble(rotationPath);
     
-    Pose2d positionOverall = odometryOverall.getPoseMeters();
-    double xOverall = positionOverall.getX();
-    double yOverall = positionOverall.getY();
-    double rotationOverall = positionOverall.getRotation().getDegrees();
-    nt.getEntry("x_overall").setDouble(xOverall);
-    nt.getEntry("y_overall").setDouble(yOverall);
-    nt.getEntry("r_overall").setDouble(rotationOverall);
+    // Pose2d positionOverall = odometryOverall.getPoseMeters();
+    // double xOverall = positionOverall.getX();
+    // double yOverall = positionOverall.getY();
+    // double rotationOverall = positionOverall.getRotation().getDegrees();
+    // nt.getEntry("x_overall").setDouble(xOverall);
+    // nt.getEntry("y_overall").setDouble(yOverall);
+    // nt.getEntry("r_overall").setDouble(rotationOverall);
   }
 
   // Returns the currently-estimated pose of the robot.
@@ -97,9 +97,9 @@ public class Drivetrain extends SubsystemBase {
     return odometryPath.getPoseMeters();
   }
 
-  public Pose2d getOverallPose() {
-    return odometryOverall.getPoseMeters();
-  }
+  // public Pose2d getOverallPose() {
+  //   return odometryOverall.getPoseMeters();
+  // }
 
   // Returns the current wheel speeds of the robot.
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
