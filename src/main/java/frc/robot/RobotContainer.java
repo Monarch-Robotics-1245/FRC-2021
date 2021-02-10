@@ -43,7 +43,7 @@ public class RobotContainer {
   private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
   private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
 
-  PathPoint[] path = PathPoint.loadCSV("Slalom.csv");
+  PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
   Command cmd = new TrajectoryFollow(drivetrain, path);
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);
   //  private final AutoGroup autoCommand = new AutoGroup(turret, drivetrain, ballsuck);
