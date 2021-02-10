@@ -74,14 +74,13 @@ public class Drivetrain extends SubsystemBase {
     
     // odometryOverall.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
 
-
-    // Pose2d positionPath = odometryPath.getPoseMeters();
-    // double xPath = positionPath.getX();
-    // double yPath = positionPath.getY();
-    // double rotationPath = positionPath.getRotation().getDegrees();
-    // nt.getEntry("x_path").setDouble(xPath);
-    // nt.getEntry("y_path").setDouble(yPath);
-    // nt.getEntry("r_path").setDouble(rotationPath);
+    Pose2d positionPath = odometryPath.getPoseMeters();
+    double xPath = positionPath.getX();
+    double yPath = positionPath.getY();
+    double rotationPath = positionPath.getRotation().getDegrees();
+    nt.getEntry("x_path").setDouble(xPath);
+    nt.getEntry("y_path").setDouble(yPath);
+    nt.getEntry("r_path").setDouble(rotationPath);
     
     // Pose2d positionOverall = odometryOverall.getPoseMeters();
     // double xOverall = positionOverall.getX();
