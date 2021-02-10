@@ -61,7 +61,7 @@ public class Drivetrain extends SubsystemBase {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     nt = inst.getTable("Position");
 
-    SmartDashboard.putData("DrivetrainSystem", this);
+    // SmartDashboard.putData("DrivetrainSystem", this);
   }
 
   @Override

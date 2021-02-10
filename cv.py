@@ -286,7 +286,7 @@ if __name__ == "__main__":
         # inside:
         if camera_index == 0:
             binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
-        elif camera_index == 1:
+        elif (camera_index == 1 or camera_index == 2):
             binary_img = cv2.inRange(hsv_img, (20, 70, 140), (60, 255, 255))
 
         # outside:
@@ -313,7 +313,7 @@ if __name__ == "__main__":
             center, size, angle = rect
             center = [int(dim) for dim in center]  # Convert to int so we can draw
 
-            if (camera_index == 1 and (size[1]/size[0]<=0.5 or size[1]/size[0]>=2)):
+            if ((camera_index == 1 or camera_index == 2) and (size[1]/size[0]<=0.5 or size[1]/size[0]>=2)):
                 continue
 
             # Draw rectangle and circle
@@ -338,7 +338,7 @@ if __name__ == "__main__":
         processing_time = time.time() - start_time
         fps = 1 / processing_time
         cv2.putText(output_img, str(round(fps, 1)) + " fps", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255))
-        if (len(distance) > 0):
+        if (camera_index == 0 and len(distance) > 0):
             cv2.putText(output_img, str(round(distance[0], 1)) + " in", (0, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
                         (255, 255, 255))
         output_stream.putFrame(output_img)
