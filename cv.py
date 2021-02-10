@@ -267,7 +267,7 @@ if __name__ == "__main__":
     while True:
         start_time = time.time()
         temp_camera_index = vision_nt.getNumber("camera_index", 0)
-        if temp_camera_index != camera_index:
+        if temp_camera_index != camera_index and temp_camera_index<3 and temp_camera_index>=0:
             camera_index = temp_camera_index
             input_stream = CameraServer.getInstance().getVideo(camera=cameras[int(camera_index)])
 
