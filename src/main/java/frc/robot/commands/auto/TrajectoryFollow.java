@@ -83,8 +83,8 @@ public class TrajectoryFollow extends CommandBase {
         index = 1;
         drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(initialRotation)));
         finished = false;
-        leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
-        rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
+        leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
+        rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
     }
 
     public void updatePath(PathPoint[] newPath){
@@ -93,8 +93,8 @@ public class TrajectoryFollow extends CommandBase {
         index = 1;
         drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(initialRotation)));
         finished = false;
-        leftPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
-        rightPID = new MotorControlPID(targetVelocity,1.0,0.75,0.15,0.06);
+        leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
+        rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
     }
 
     @Override
