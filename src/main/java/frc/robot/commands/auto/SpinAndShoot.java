@@ -86,7 +86,7 @@ public class SpinAndShoot extends CommandBase {
         if(Math.abs(x)<0.3){
             double speed = shootControl.getSpeed(turret.getEncoderRate());
             turret.spinMotors(speed,speed);
-            if(Math.abs(x)<0.05 && Math.abs(turret.getEncoderRate()-targetSpinSpeed)<0.5){
+            if(Math.abs(x)<0.05 && Math.abs(turret.getEncoderRate()-targetSpinSpeed)<1.5){
                 timer.start();
                 turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.8);
                 if(timer.get()>3){

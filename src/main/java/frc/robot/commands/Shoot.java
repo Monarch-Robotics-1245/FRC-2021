@@ -95,14 +95,14 @@ public class Shoot extends CommandBase {
             // double rightSpeed = motorControlRight.getSpeed(turret.getEncoderRightRate());
             turret.spinMotors(leftSpeed,leftSpeed);
             // turret.spinMotors(0.47,0.47);
-            SmartDashboard.putNumber("Left Speed", leftSpeed);
-            SmartDashboard.putNumber("Left RPS", turret.getEncoderRate());
+            // SmartDashboard.putNumber("Left Speed", leftSpeed);
+            // SmartDashboard.putNumber("Left RPS", turret.getEncoderRate());
 
             // System.out.println("RPM:"+turret.getEncoderLeftRate());
 
 
 
-            if(OI.rightJoystick.getRawButton(5) || OI.xboxController.getAButton()){
+            if((OI.rightJoystick.getRawButton(5) || OI.xboxController.getAButton()) && Math.abs(turret.getEncoderRate()-targetSpinSpeedAuto)<1.5){
                 turret.getInputWheelMotor().set(ControlMode.PercentOutput,1.0);
             }
             else {
