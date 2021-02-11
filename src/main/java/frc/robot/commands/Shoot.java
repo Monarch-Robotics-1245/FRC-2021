@@ -53,7 +53,6 @@ public class Shoot extends CommandBase {
         addRequirements(turret);
         motorControl = new MotorControlPID(targetSpinSpeedAuto,1.0,1.0,0.1,0.001);
 
-
         timer = new Timer();
     }
 
@@ -79,12 +78,12 @@ public class Shoot extends CommandBase {
         || OI.rightJoystick.getRawButton(10))
         {
 
-            if(OI.leftJoystick.getTrigger()){
-                motorControl.setTarget(targetSpinSpeedAuto);
-            }
-            else{
-                motorControl.setTarget(targetSpinSpeedTrench);
-            }
+            // if(OI.leftJoystick.getTrigger()){
+            //     motorControl.setTarget(targetSpinSpeedAuto);
+            // }
+            // else{
+            //     motorControl.setTarget(targetSpinSpeedTrench);
+            // }
 
             //Test timer stuff
             // double startTime = timer.getMatchTime();
