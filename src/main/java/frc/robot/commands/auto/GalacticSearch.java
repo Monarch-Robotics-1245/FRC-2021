@@ -38,7 +38,7 @@ public class GalacticSearch extends TrajectoryFollow {
      * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
     public GalacticSearch(Drivetrain drivetrain, BallSuck ballsuck){
-      super(drivetrain, ballsuck);
+      super(drivetrain, ballsuck, 180.0);
       // Pose2d[] barrelWide = loadCSV("BarrelWide.csv");
       // addCommands(new TrajectoryFollow(drivetrain, barrelWide));
       NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -108,45 +108,21 @@ public class GalacticSearch extends TrajectoryFollow {
       nt.getEntry("to_follow").setNumber(pathToFollow);
       PathPoint[] path = {
         new PathPoint(0,0),
-        new PathPoint(-1,0),
+        new PathPoint(1,0),
       };
       // path = loadCSV("GalacticARed.csv");
       if(pathToFollow==1){
-        path = loadCSV("GalacticARed.csv",true);
+        path = PathPoint.loadCSV("GalacticARed.csv");
       }
       else if(pathToFollow==2){
-        path = loadCSV("GalacticBRed.csv",true);
+        path = PathPoint.loadCSV("GalacticBRed.csv");
       }
       else if(pathToFollow==3){
-        path = loadCSV("GalacticABlue.csv",true);
+        path = PathPoint.loadCSV("GalacticABlue.csv");
       }
       else if(pathToFollow==4){
-        path = loadCSV("GalacticBBlue.csv",true);
+        path = PathPoint.loadCSV("GalacticBBlue.csv");
       }
-      super.updatePath(path);
+      super.updatePath(path, 180);
     }
-
-    PathPoint[] loadCSV(String path, boolean backwards){
-      ArrayList<PathPoint> poseList = new ArrayList<PathPoint>();
-      Path filePath = Filesystem.getDeployDirectory().toPath().resolve(path);
-      try {
-        BufferedReader reader = Files.newBufferedReader(filePath);
-        String line;
-        while ((line = reader.readLine()) != null) {
-          String[] parts = line.split(",");
-          double x = Double.parseDouble(parts[0]) * (backwards ? -1 : 1);
-          double y = Double.parseDouble(parts[1]) * (backwards ? -1 : 1);
-          double velocityScalar = Double.parseDouble(parts[2]);
-          boolean intake = Integer.parseInt(parts[3]) == 1;
-          PathPoint newPose = new PathPoint(x,y, velocityScalar, intake);
-          poseList.add(newPose);
-          // System.out.println(newPose);
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      PathPoint[] positions = new PathPoint[poseList.size()]; 
-      positions = poseList.toArray(positions);
-      return positions;
-  }
 }

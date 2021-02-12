@@ -34,18 +34,18 @@ public class TrajectoryTest extends SequentialCommandGroup {
         // PathPoint[] barrelFull = PathPoint.loadCSV("BarrelFull.csv");
         // addCommands(new TrajectoryFollow(drivetrain, barrelFull));
 
-        PathPoint[] slalom = PathPoint.loadCSV("Slalom.csv");
+        // PathPoint[] slalom = PathPoint.loadCSV("Slalom.csv");
         // addCommands(new TrajectoryFollow(drivetrain, slalom));
 
-        PathPoint[] bounce1 = PathPoint.loadCSV("Bounce1.csv"),
-        bounce2 = PathPoint.loadCSV("Bounce2.csv",true), 
-        bounce3 = PathPoint.loadCSV("Bounce3.csv"),
-        bounce4 = PathPoint.loadCSV("Bounce4.csv", true);
-        addCommands(
-          new TrajectoryFollow(drivetrain,bounce1,false,0),
-          new TrajectoryFollow(drivetrain,bounce2,true,90),
-          new TrajectoryFollow(drivetrain,bounce3,false,90),
-          new TrajectoryFollow(drivetrain,bounce4,true,90)
-        );
+        // PathPoint[] bounce1 = PathPoint.loadCSV("Bounce1.csv"),
+        // bounce2 = PathPoint.loadCSV("Bounce2.csv",true), 
+        // bounce3 = PathPoint.loadCSV("Bounce3.csv"),
+        // bounce4 = PathPoint.loadCSV("Bounce4.csv", true);
+        // addCommands(
+        //   new TrajectoryFollow(drivetrain,bounce1,false,0),
+        //   new TrajectoryFollow(drivetrain,bounce2,true,90),
+        //   new TrajectoryFollow(drivetrain,bounce3,false,90),
+        //   new TrajectoryFollow(drivetrain,bounce4,true,90)
+        // );
     }
 }
