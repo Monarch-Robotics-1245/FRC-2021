@@ -52,9 +52,9 @@ public class RobotContainer {
   // bounce4 = PathPoint.loadCSV("Bounce4.csv", true);
   // Command cmd = new SequentialCommandGroup(
   //   new TrajectoryFollow(drivetrain,bounce1,false,0)
-    //new TrajectoryFollow(drivetrain,bounce2,true,-90),
-    //new TrajectoryFollow(drivetrain,bounce3,false,-90),
-    //new TrajectoryFollow(drivetrain,bounce4,true,-90)
+  //   // new TrajectoryFollow(drivetrain,bounce2,true,-72)
+  //   // new TrajectoryFollow(drivetrain,bounce3,false,10)
+  //   // new TrajectoryFollow(drivetrain,bounce4,true,-90)
   // );
 
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);

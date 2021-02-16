@@ -102,7 +102,7 @@ public class Shoot extends CommandBase {
 
 
 
-            if((OI.rightJoystick.getRawButton(5) || OI.xboxController.getAButton()) && Math.abs(turret.getEncoderRate()-targetSpinSpeedAuto)<1.5){
+            if((OI.rightJoystick.getRawButton(5) || OI.xboxController.getAButton())/* && Math.abs(turret.getEncoderRate()-targetSpinSpeedAuto)<1.5*/){
                 turret.getInputWheelMotor().set(ControlMode.PercentOutput,1.0);
             }
             else {
