@@ -32,6 +32,7 @@ public class SpinAndShoot extends CommandBase {
     private final Turret turret;
     private MotorControlPID shootControl;
     final double targetSpinSpeed = 28.00;
+    private boolean canShoot;
 
     public SpinAndShoot(Drivetrain drivetrain, Turret turret) {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -55,6 +56,7 @@ public class SpinAndShoot extends CommandBase {
         shootControl = new MotorControlPID(targetSpinSpeed,1.0,1.0,0.1,0.001);
         isFinished = false;
         timer.reset();
+        canShoot = false;
     }
 
     /**
@@ -86,7 +88,11 @@ public class SpinAndShoot extends CommandBase {
         if(Math.abs(x)<0.3){
             double speed = shootControl.getSpeed(turret.getEncoderRate());
             turret.spinMotors(speed,speed);
-            if(Math.abs(x)<0.05 && Math.abs(turret.getEncoderRate()-targetSpinSpeed)<1.5){
+            if(!canShoot && turret.getEncoderRate() > 27){
+                canShoot = true;
+            }
+            
+            if(Math.abs(x)<0.05 && canShoot){
                 timer.start();
                 turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.8);
                 if(timer.get()>3){

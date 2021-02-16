@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.PathPoint;
 import frc.robot.Target;
+import frc.robot.TrajectoryOptions;
 import frc.robot.subsystems.BallSuck;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
@@ -38,7 +39,7 @@ public class GalacticSearch extends TrajectoryFollow {
      * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
     public GalacticSearch(Drivetrain drivetrain, BallSuck ballsuck){
-      super(drivetrain, ballsuck, 180.0);
+      super(new TrajectoryOptions(drivetrain).addIntake(ballsuck).addInitialRotation(180));
       // Pose2d[] barrelWide = loadCSV("BarrelWide.csv");
       // addCommands(new TrajectoryFollow(drivetrain, barrelWide));
       NetworkTableInstance inst = NetworkTableInstance.getDefault();

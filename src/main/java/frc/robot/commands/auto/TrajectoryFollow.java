@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.MotorControlPID;
 import frc.robot.PathPoint;
+import frc.robot.TrajectoryOptions;
 import frc.robot.subsystems.BallSuck;
 import frc.robot.subsystems.Drivetrain;
 
@@ -21,8 +22,6 @@ public class TrajectoryFollow extends CommandBase {
 
     private MotorControlPID leftPID, rightPID;
 
-    private boolean useIntake;
-
     //max distance (in meters) we can be in order for it to be valid.
     final double maxErrorDistance = 0.5;
 
@@ -33,48 +32,77 @@ public class TrajectoryFollow extends CommandBase {
     final double targetVelocity = 1.3;
     
     public double initialRotation;
+    public boolean useGyroRotation;
     
     private NetworkTable nt;
 
-    public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions){
-        this(drivetrain,positions,0);
-    }
-
-    public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, double initialRotation){
-        this.drivetrain = drivetrain;
-        this.positions = positions;
-        addRequirements(drivetrain);
-
+    public TrajectoryFollow(TrajectoryOptions options){
+        this.drivetrain = options.drivetrain;
+        this.initialRotation = options.initialRotation;
+        this.useGyroRotation = options.useGyroRotation;
+        if(options.intake !=null){
+            this.ballsuck = options.intake;
+            addRequirements(drivetrain,ballsuck);
+        }
+        else{
+            addRequirements(drivetrain);
+        }
+        if(options.path !=null){
+            this.positions = options.path;
+        }
+        else{
+            PathPoint[] path = {
+                new PathPoint(0,0),
+                new PathPoint(-1,0),
+            };
+            this.positions = path;
+        }
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         nt = inst.getTable("PathFollowing");
-        useIntake = false;
-        this.initialRotation = initialRotation;
     }
 
-    public TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck){
-        this(drivetrain,ballsuck,0.0);
-    }
-    public TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck, double initialRotation){
-        this.initialRotation = initialRotation;
-        this.drivetrain = drivetrain;
-        PathPoint[] path = {
-            new PathPoint(0,0),
-            new PathPoint(-1,0),
-        };
-        this.positions = path;
-        this.ballsuck = ballsuck;
-        addRequirements(drivetrain,ballsuck);
+    // public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions){
+    //     this(drivetrain,positions,0);
+    // }
 
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        nt = inst.getTable("PathFollowing");
-        useIntake = true;
-    }
+    // public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, double initialRotation){
+    //     this.drivetrain = drivetrain;
+    //     this.positions = positions;
+    //     addRequirements(drivetrain);
+
+    //     NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    //     nt = inst.getTable("PathFollowing");
+    //     this.initialRotation = initialRotation;
+    // }
+
+    // public TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck){
+    //     this(drivetrain,ballsuck,0.0);
+    // }
+    // public TrajectoryFollow(Drivetrain drivetrain, BallSuck ballsuck, double initialRotation){
+    //     this.initialRotation = initialRotation;
+    //     this.drivetrain = drivetrain;
+    //     PathPoint[] path = {
+    //         new PathPoint(0,0),
+    //         new PathPoint(-1,0),
+    //     };
+    //     this.positions = path;
+    //     this.ballsuck = ballsuck;
+    //     addRequirements(drivetrain,ballsuck);
+
+    //     NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    //     nt = inst.getTable("PathFollowing");
+    // }
 
 
     @Override
     public void initialize() {
         index = 1;
-        drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(initialRotation * Math.PI / 180.0)));
+        if(useGyroRotation){
+            drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(initialRotation * Math.PI / 180.0 + drivetrain.getGyro().getRotation2d().getRadians())));
+        }
+        else{
+            drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(initialRotation * Math.PI / 180.0)));
+        }
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
@@ -84,7 +112,12 @@ public class TrajectoryFollow extends CommandBase {
         System.out.println("UPDATING PATH");
         positions = newPath;
         index = 1;
-        drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(initialRotation * Math.PI / 180.0)));
+        if(useGyroRotation){
+            drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, drivetrain.getGyro().getRotation2d()));
+        }
+        else{
+            drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(initialRotation * Math.PI / 180.0)));
+        }
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
@@ -92,13 +125,7 @@ public class TrajectoryFollow extends CommandBase {
 
     public void updatePath(PathPoint[] newPath, double rotation){
         this.initialRotation = rotation;
-        System.out.println("UPDATING PATH");
-        positions = newPath;
-        index = 1;
-        drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(rotation)));
-        finished = false;
-        leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
-        rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
+        updatePath(newPath);
     }
 
     @Override
@@ -153,7 +180,7 @@ public class TrajectoryFollow extends CommandBase {
 
         //move the robot based on the speeds calculated above
         drivetrain.tankDrive(leftSpeed, rightSpeed);
-        if(useIntake){
+        if(ballsuck !=null){
             if(target.intake){
                 ballsuck.turnOnIntake();
                 ballsuck.turnOnHandle();
@@ -218,7 +245,7 @@ public class TrajectoryFollow extends CommandBase {
     public void end(boolean interrupted) {
         drivetrain.tankDriveVolts(0, 0);
         System.out.println("DONE WITH ALIGN");
-        if(useIntake){
+        if(ballsuck !=null){
             ballsuck.turnOffIntake();
             ballsuck.turnOffHandle();
         }
