@@ -12,28 +12,29 @@ public class PathPoint {
     public double x, y;
     public double velocityScalar;
     public boolean intake;
+    public boolean backwards;
 
     public PathPoint(double x, double y){
-        this(x,y,1.0,false);
+        this(x,y,1.0,false,false);
     }
 
     public PathPoint(double x, double y, double velocityScalar){
-        this(x,y,velocityScalar,false);
+        this(x,y,velocityScalar,false,false);
     }
 
     public PathPoint(double x, double y, double velocityScalar, boolean intake){
+        this(x,y,velocityScalar,intake,false);
+    }
+
+    public PathPoint(double x, double y, double velocityScalar, boolean intake, boolean backwards){
         this.x = x;
         this.y = y;
         this.velocityScalar = velocityScalar;
         this.intake = intake;
+        this.backwards = backwards;
     }
 
     public static PathPoint[] loadCSV(String path){
-        return loadCSV(path,false);
-    }
-
-
-    public static PathPoint[] loadCSV(String path, boolean backwards){
       ArrayList<PathPoint> poseList = new ArrayList<PathPoint>();
       Path filePath = Filesystem.getDeployDirectory().toPath().resolve(path);
       try {
@@ -41,11 +42,12 @@ public class PathPoint {
         String line;
         while ((line = reader.readLine()) != null) {
           String[] parts = line.split(",");
-          double x = Double.parseDouble(parts[0]) * (backwards ? -1 : 1);
-          double y = Double.parseDouble(parts[1]) * (backwards ? -1 : 1);
+          double x = Double.parseDouble(parts[0]);
+          double y = Double.parseDouble(parts[1]);
           double velocityScaler = Double.parseDouble(parts[2]);
           boolean intake = Integer.parseInt(parts[3]) == 1;
-          PathPoint newPose = new PathPoint(x,y, velocityScaler, intake);
+          boolean backwards = Integer.parseInt(parts[4]) == 1;
+          PathPoint newPose = new PathPoint(x,y, velocityScaler, intake, backwards);
           poseList.add(newPose);
           // System.out.println(newPose);
         }

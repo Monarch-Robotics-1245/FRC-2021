@@ -23,8 +23,6 @@ public class TrajectoryFollow extends CommandBase {
 
     private boolean useIntake;
 
-    private boolean driveBackwards;
-
     //max distance (in meters) we can be in order for it to be valid.
     final double maxErrorDistance = 0.5;
 
@@ -39,13 +37,10 @@ public class TrajectoryFollow extends CommandBase {
     private NetworkTable nt;
 
     public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions){
-        this(drivetrain,positions,false);
-    }
-    public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards){
-        this(drivetrain,positions,false,0);
+        this(drivetrain,positions,0);
     }
 
-    public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, boolean backwards, double initialRotation){
+    public TrajectoryFollow(Drivetrain drivetrain, PathPoint[] positions, double initialRotation){
         this.drivetrain = drivetrain;
         this.positions = positions;
         addRequirements(drivetrain);
@@ -53,7 +48,6 @@ public class TrajectoryFollow extends CommandBase {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         nt = inst.getTable("PathFollowing");
         useIntake = false;
-        driveBackwards = backwards;
         this.initialRotation = initialRotation;
     }
 
@@ -74,7 +68,6 @@ public class TrajectoryFollow extends CommandBase {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         nt = inst.getTable("PathFollowing");
         useIntake = true;
-        driveBackwards = true;
     }
 
 
@@ -92,6 +85,17 @@ public class TrajectoryFollow extends CommandBase {
         positions = newPath;
         index = 1;
         drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(initialRotation * Math.PI / 180.0)));
+        finished = false;
+        leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
+        rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
+    }
+
+    public void updatePath(PathPoint[] newPath, double rotation){
+        this.initialRotation = rotation;
+        System.out.println("UPDATING PATH");
+        positions = newPath;
+        index = 1;
+        drivetrain.resetOdometry(new Pose2d(positions[0].x, positions[0].y, new Rotation2d(rotation)));
         finished = false;
         leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
         rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.15,0.06);
@@ -115,13 +119,13 @@ public class TrajectoryFollow extends CommandBase {
             encoderScalar = -1.0;
         }
         //Set the "inside" wheel to spin at a slower rate (from above)
-        if((!driveBackwards && errors[3]<=0) || (driveBackwards && errors[3]>=0)){
-            rightPID.setTarget(targetVelocity * encoderScalar * backwards() * target.velocityScalar);
-            leftPID.setTarget(targetVelocity * backwards() * target.velocityScalar);
+        if((!target.backwards && errors[3]<=0) || (target.backwards && errors[3]>=0)){
+            rightPID.setTarget(targetVelocity * encoderScalar * backwards(target) * target.velocityScalar);
+            leftPID.setTarget(targetVelocity * backwards(target) * target.velocityScalar);
         }
         else{
-            leftPID.setTarget(targetVelocity * encoderScalar * backwards() * target.velocityScalar);
-            rightPID.setTarget(targetVelocity * backwards() * target.velocityScalar);
+            leftPID.setTarget(targetVelocity * encoderScalar * backwards(target) * target.velocityScalar);
+            rightPID.setTarget(targetVelocity * backwards(target) * target.velocityScalar);
         }
 
         // if(Math.abs(errors[3])>=2*Math.PI/3){
@@ -173,8 +177,8 @@ public class TrajectoryFollow extends CommandBase {
 
     double[] errorFromPoint(PathPoint point){
         //calulate the distance we are away in each direction.
-        double errorX = (point.x - drivetrain.getPathPose().getX()) * backwards();
-        double errorY = (point.y - drivetrain.getPathPose().getY()) * backwards();
+        double errorX = (point.x - drivetrain.getPathPose().getX()) * backwards(point);
+        double errorY = (point.y - drivetrain.getPathPose().getY()) * backwards(point);
         //calculate the total distance using the pythagorean theorem.
         double distanceError = Math.sqrt(errorX * errorX + errorY * errorY);
         double robotAngle = drivetrain.getPathPose().getRotation().getRadians();
@@ -201,8 +205,8 @@ public class TrajectoryFollow extends CommandBase {
         return error;
     }
 
-    public int backwards(){
-        return driveBackwards ? -1 : 1;
+    public int backwards(PathPoint p){
+        return p.backwards ? -1 : 1;
     }
 
     @Override
