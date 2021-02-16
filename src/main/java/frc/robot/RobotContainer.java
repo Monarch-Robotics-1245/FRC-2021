@@ -44,18 +44,18 @@ public class RobotContainer {
   private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
   private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
 
-  PathPoint[] path = PathPoint.loadCSV("Slalom.csv");
-  // PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
+  // PathPoint[] path = PathPoint.loadCSV("Slalom.csv");
+  PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
   TrajectoryOptions options = new TrajectoryOptions(drivetrain).addPath(path);
   Command cmd = new TrajectoryFollow(options);
 
   
-  
-  SequentialCommandGroup auto2020 = new SequentialCommandGroup(
-    new SpinAndShoot(drivetrain, turret),
-    new TrajectoryFollow((new TrajectoryOptions(drivetrain)).addPath(PathPoint.loadCSV("Auto2020.csv")).addIntake(ballsuck).useGyro().addInitialRotation(180.0)),
-    new SpinAndShoot(drivetrain, turret)
-  );
+  SpinAndShoot spinShoot = new SpinAndShoot(drivetrain, turret);
+  // SequentialCommandGroup auto2020 = new SequentialCommandGroup(
+  //   new SpinAndShoot(drivetrain, turret),
+  //   new TrajectoryFollow((new TrajectoryOptions(drivetrain)).addPath(PathPoint.loadCSV("Auto2020.csv")).addIntake(ballsuck).useGyro().addInitialRotation(180.0)),
+  //   new SpinAndShoot(drivetrain, turret)
+  // );
 
   // PathPoint[] bounce1 = PathPoint.loadCSV("Bounce1.csv"),
   // bounce2 = PathPoint.loadCSV("Bounce2.csv",true), 
@@ -109,8 +109,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(int mode) {
-    return auto2020;
-    // return cmd;
+    // return spinShoot;
+    // return auto2020;
+    return cmd;
 
     // switch(mode){
     //   case AutoMode.galactic:
