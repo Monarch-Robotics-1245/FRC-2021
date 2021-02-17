@@ -109,9 +109,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(int mode) {
-    // return spinShoot;
+    return spinShoot;
     // return auto2020;
-    return cmd;
+    // return cmd;
 
     // switch(mode){
     //   case AutoMode.galactic:
