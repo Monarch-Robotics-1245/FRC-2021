@@ -315,9 +315,8 @@ if __name__ == "__main__":
             center = [int(dim) for dim in center]  # Convert to int so we can draw
 
             if(camera_index == 0 and (size[0] < 50 or size[1] < 30)):
-                continue;
-
-            if ((camera_index == 1 or camera_index == 2) and (size[1]/size[0]<=0.5 or size[1]/size[0]>=2)):
+                continue
+            elif ((camera_index == 1 or camera_index == 2) and (size[1]/size[0]<=0.5 or size[1]/size[0]>=2)):
                 continue
 
             # Draw rectangle and circle
