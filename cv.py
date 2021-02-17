@@ -285,7 +285,8 @@ if __name__ == "__main__":
 
         # inside:
         if camera_index == 0:
-            binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
+            binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255)) 
+           # binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
         elif (camera_index == 1 or camera_index == 2):
             binary_img = cv2.inRange(hsv_img, (20, 70, 140), (60, 255, 255))
 
