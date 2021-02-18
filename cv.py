@@ -257,6 +257,7 @@ if __name__ == "__main__":
     print("Doing computer vision things")
 
     focal = 60 * 94 / 8.25
+    focalBall = 69 * 57 / 7
 
     camera_index = vision_nt.getNumber("camera_index", 0)
 
@@ -330,7 +331,10 @@ if __name__ == "__main__":
             y_list.append((center[1] - height / 2) / (height / 2))
             area_list.append(area)
             width_list.append(target_width)
-            distance.append(8.25 * focal / target_width)
+            if(camera_index == 0):
+                distance.append(8.25 * focal / target_width)
+            else:
+                distance.append(7 * focalBall / target_width)
 
         vision_nt.putNumberArray('x_pos', x_list)
         vision_nt.putNumberArray('y_pos', y_list)
