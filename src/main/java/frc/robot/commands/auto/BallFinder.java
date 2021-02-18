@@ -72,8 +72,9 @@ public class BallFinder extends TrajectoryFollow {
       double distanceSide = target.y * 640 / target.width * 7;
       PathPoint[] newPath = {
         new PathPoint(0,0,1.0,false,true),
-        new PathPoint(distanceOut,distanceSide * -1,1.0,false,true),
+        new PathPoint(distanceOut,distanceSide * -1,1.0,target.y > 0.75,true),
       };
+      super.updatePath(newPath);
     }
 
     @Override
