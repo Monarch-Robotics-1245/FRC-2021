@@ -39,7 +39,7 @@ public class BallFinder extends TrajectoryFollow {
      * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
     public BallFinder(Drivetrain drivetrain, BallSuck ballsuck){
-      super(new TrajectoryOptions(drivetrain).addIntake(ballsuck).addInitialRotation(180));
+      super(new TrajectoryOptions(drivetrain).addIntake(ballsuck));
       // Pose2d[] barrelWide = loadCSV("BarrelWide.csv");
       // addCommands(new TrajectoryFollow(drivetrain, barrelWide));
       NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -49,81 +49,22 @@ public class BallFinder extends TrajectoryFollow {
     @Override
     public void initialize(){
       super.initialize();
+    }
+    @Override
+    public void execute(){
       double[] area = nt.getEntry("area").getDoubleArray(new double[0]);
       double[] x_pos = nt.getEntry("x_pos").getDoubleArray(new double[0]);
       double[] y_pos = nt.getEntry("y_pos").getDoubleArray(new double[0]);
-      String[] locations = new String[area.length];
-      int pathToFollow = 0; // 0: None, 1: A-Red, 2: B-Red, 3:A-Blue, 4:B-Blue
+      double[] distances = nt.getEntry("distance").getDoubleArray(new double[0]);
+      Target[] targets = new Target[area.length];
       for(int i = 0; i<area.length; i++){
-        Target target =  new Target(x_pos[i],y_pos[i],area[i]);
-        if(Math.abs(target.x - 0.478)<xTolerance && Math.abs(target.y - 0.129)<yTolerance){
-          locations[i] = "D5";
-        }
-        else if(Math.abs(target.x - (-0.184))<xTolerance && Math.abs(target.y - 0.838)<yTolerance){
-          locations[i] = "C3";
-        }
-        else if(Math.abs(target.x - (-0.553))<xTolerance && Math.abs(target.y - (-0.212))<yTolerance){
-          locations[i] = "B7";
-        }
-        else if(Math.abs(target.x - (0.9))<xTolerance && Math.abs(target.y - (0.0083))<yTolerance){
-          locations[i] = "E6";
-        }
-        else if(Math.abs(target.x - (-0.0813))<xTolerance && Math.abs(target.y - (-0.3292))<yTolerance){
-          locations[i] = "C9";
-        }
-        else if(Math.abs(target.x - (-0.4563))<xTolerance && Math.abs(target.y - (-0.2875))<yTolerance){
-          locations[i] = "B8";
-        }
-        else if(Math.abs(target.x - (0.3875))<xTolerance && Math.abs(target.y - (-0.0333))<yTolerance){
-          locations[i] = "D6";
-        }
-        else if(Math.abs(target.x - (0.2219))<xTolerance && Math.abs(target.y - (-0.3542))<yTolerance){
-          locations[i] = "D10";
-        }
-        else{
-          locations[i] = "Z0";
-        }
+          targets[i] = new Target(x_pos[i],y_pos[i],area[i],distances[i]);
       }
-      nt.getEntry("locations").setStringArray(locations);
-      if(Arrays.asList(locations).indexOf("D5")>=0){
-        //We must be doing a red path.
-        if(Arrays.asList(locations).indexOf("C3")>=0){
-          pathToFollow = 1;
-        }
-        else if(Arrays.asList(locations).indexOf("B7")>=0){
-          pathToFollow = 2;
-        }
+      if(targets.length==0){
+          return;
       }
-      else if(Arrays.asList(locations).indexOf("E6")>=0
-        // || Arrays.asList(locations).indexOf("B7")>=0
-        || Arrays.asList(locations).indexOf("C9")>=0
-      ){
-        pathToFollow = 3;
+      else if(targets.length>1){
+          Arrays.sort(targets, new SortTarget());
       }
-      else if(Arrays.asList(locations).indexOf("D6")>=0
-        // || Arrays.asList(locations).indexOf("B8")>=0
-        || Arrays.asList(locations).indexOf("D10")>=0
-      ){
-        pathToFollow = 4;
-      }
-      nt.getEntry("to_follow").setNumber(pathToFollow);
-      PathPoint[] path = {
-        new PathPoint(0,0),
-        new PathPoint(1,0),
-      };
-      // path = loadCSV("GalacticARed.csv");
-      if(pathToFollow==1){
-        path = PathPoint.loadCSV("GalacticARed.csv");
-      }
-      else if(pathToFollow==2){
-        path = PathPoint.loadCSV("GalacticBRed.csv");
-      }
-      else if(pathToFollow==3){
-        path = PathPoint.loadCSV("GalacticABlue.csv");
-      }
-      else if(pathToFollow==4){
-        path = PathPoint.loadCSV("GalacticBBlue.csv");
-      }
-      super.updatePath(path, 180);
     }
 }

@@ -176,6 +176,7 @@ public class SpinAndShoot extends CommandBase {
         drivetrain.tankDriveVolts(0, 0);
         System.out.println("DONE WITH ALIGN");
         nt.getEntry("spin").setDouble(0.0);
+        turret.spinMotors(0.0,0.0);
         Robot.canShootAuto = true;
     }
 }

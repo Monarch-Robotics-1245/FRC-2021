@@ -110,8 +110,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand(int mode) {
     // return spinShoot;
-    // return auto2020;
-    return cmd;
+    return auto2020;
+    // return cmd;
 
     // switch(mode){
     //   case AutoMode.galactic:
