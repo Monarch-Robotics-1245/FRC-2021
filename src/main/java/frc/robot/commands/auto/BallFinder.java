@@ -33,13 +33,14 @@ public class BallFinder extends TrajectoryFollow {
 
     private final double xTolerance = 0.1;
     private final double yTolerance = 0.1;
+
     /**
      * @param turret The Turret Subsystem {@link Turret} so that we can shoot balls
      * @param ballsuck The BallSuck Subsystem {@link BallSuck} so that we can SUCC balls
      * @param drivetrain The Drivetrain Subsystem {@link OldDrivetrain} so that we can drive!
      * */
     public BallFinder(Drivetrain drivetrain, BallSuck ballsuck){
-      super(new TrajectoryOptions(drivetrain).addIntake(ballsuck));
+      super(new TrajectoryOptions(drivetrain).addIntake(ballsuck).addInitialRotation(180).addPath(PathPoint.empty()));
       // Pose2d[] barrelWide = loadCSV("BarrelWide.csv");
       // addCommands(new TrajectoryFollow(drivetrain, barrelWide));
       NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -52,19 +53,31 @@ public class BallFinder extends TrajectoryFollow {
     }
     @Override
     public void execute(){
+      super.execute();
       double[] area = nt.getEntry("area").getDoubleArray(new double[0]);
       double[] x_pos = nt.getEntry("x_pos").getDoubleArray(new double[0]);
       double[] y_pos = nt.getEntry("y_pos").getDoubleArray(new double[0]);
       double[] distances = nt.getEntry("distance").getDoubleArray(new double[0]);
+      double[] width = nt.getEntry("width").getDoubleArray(new double[0]);
       Target[] targets = new Target[area.length];
       for(int i = 0; i<area.length; i++){
-          targets[i] = new Target(x_pos[i],y_pos[i],area[i],distances[i]);
+          targets[i] = new Target(x_pos[i],y_pos[i],area[i],distances[i],width[i]);
       }
       if(targets.length==0){
           return;
       }
-      else if(targets.length>1){
-          Arrays.sort(targets, new SortTarget());
-      }
+      Arrays.sort(targets, new SortTarget());
+      Target target = targets[0];
+      double distanceOut = target.distance;
+      double distanceSide = target.y * 640 / target.width * 7;
+      PathPoint[] newPath = {
+        new PathPoint(0,0,1.0,false,true),
+        new PathPoint(distanceOut,distanceSide * -1,1.0,false,true),
+      };
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

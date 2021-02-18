@@ -5,15 +5,15 @@ public class Target {
     public double y;
     public double area;
     public double distance;
+    public double width;
     public Target(double x, double y, double area) {
-        this.x = x;
-        this.y = y;
-        this.area = area;
+        this(x,y,area,0,0);
     }
-    public Target(double x, double y, double area, double distance){
+    public Target(double x, double y, double area, double distance, double width){
         this.x = x;
         this.y = y;
         this.area = area;
         this.distance = distance;
+        this.width = width;
     }
 }

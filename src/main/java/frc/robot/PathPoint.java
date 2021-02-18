@@ -58,4 +58,10 @@ public class PathPoint {
       positions = poseList.toArray(positions);
       return positions;
   }
+  public static PathPoint[] empty(){
+    PathPoint[] path = {
+      new PathPoint(0,0), new PathPoint(0,0.1)
+    };
+    return path;
+  }
 }
