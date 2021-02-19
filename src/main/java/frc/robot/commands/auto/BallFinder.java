@@ -63,22 +63,25 @@ public class BallFinder extends TrajectoryFollow {
       for(int i = 0; i<area.length; i++){
           targets[i] = new Target(x_pos[i],y_pos[i],area[i],distances[i],width[i]);
       }
-      if(targets.length==0){
-          return;
+      if(targets.length>0){
+        Arrays.sort(targets, new SortTarget());
+        Target target = targets[0];
+        if(target.area>1000){
+          double distanceOut = target.distance / 39.37 + 0.5;
+          double distanceSide = target.x * 320 / target.width * 7 / 39.37;
+          PathPoint[] newPath = {
+            new PathPoint(0,0,0.7,false,true),
+            new PathPoint(distanceOut,distanceSide * -1,0.7,target.y > 0,true),
+          };
+          nt.getEntry("my_pos").setString(String.valueOf(distanceOut)+"x"+String.valueOf(distanceSide));
+          
+          super.updatePath(newPath);
+        }
       }
-      Arrays.sort(targets, new SortTarget());
-      Target target = targets[0];
-      double distanceOut = target.distance;
-      double distanceSide = target.y * 640 / target.width * 7;
-      PathPoint[] newPath = {
-        new PathPoint(0,0,1.0,false,true),
-        new PathPoint(distanceOut,distanceSide * -1,1.0,target.y > 0.75,true),
-      };
-      super.updatePath(newPath);
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+    // @Override
+    // public boolean isFinished() {
+    //     return false;
+    // }
 }

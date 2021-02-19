@@ -137,9 +137,9 @@ public class SpinAndShoot extends CommandBase {
             encoderSpinControlRight.setTarget(-x);
             double spinSpeedLeft = encoderSpinControlLeft.getSpeed(drivetrain.getLeftEncoder().getRate());
             double spinSpeedRight = encoderSpinControlRight.getSpeed(drivetrain.getRightEncoder().getRate());
-            nt.getEntry("spinL").setDouble(spinSpeedLeft / 1.5);
-            nt.getEntry("spinR").setDouble(spinSpeedRight / 1.5);
-            drivetrain.tankDrive(spinSpeedLeft / 1.5, spinSpeedRight / 1.5);
+            nt.getEntry("spinL").setDouble(spinSpeedLeft / 1);
+            nt.getEntry("spinR").setDouble(spinSpeedRight / 1);
+            drivetrain.tankDrive(spinSpeedLeft / 1, spinSpeedRight / 1);
 
         }
     }

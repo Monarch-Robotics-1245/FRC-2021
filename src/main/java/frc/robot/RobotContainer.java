@@ -12,10 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.TrajectoryTest;
 import frc.robot.enums.AutoMode;
-import frc.robot.commands.auto.GalacticSearch;
-import frc.robot.commands.auto.SpinAndShoot;
-import frc.robot.commands.auto.SpinToPort;
-import frc.robot.commands.auto.TrajectoryFollow;
+import frc.robot.commands.auto.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -48,6 +45,8 @@ public class RobotContainer {
   PathPoint[] path = PathPoint.loadCSV("Bounce.csv");
   TrajectoryOptions options = new TrajectoryOptions(drivetrain).addPath(path);
   Command cmd = new TrajectoryFollow(options);
+
+  BallFinder ballFinder = new BallFinder(drivetrain, ballsuck);
 
   
   SpinAndShoot spinShoot = new SpinAndShoot(drivetrain, turret);
@@ -109,8 +108,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(int mode) {
-    // return spinShoot;
-    return auto2020;
+    // return ballFinder;
+    return spinShoot;
+    // return auto2020;
     // return cmd;
 
     // switch(mode){
