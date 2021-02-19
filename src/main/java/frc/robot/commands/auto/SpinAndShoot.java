@@ -49,6 +49,7 @@ public class SpinAndShoot extends CommandBase {
      */
     @Override
     public void initialize() {
+        drivetrain.getGyro().reset();
         nt.getEntry("camera_index").setNumber(0);
         Robot.canShootAuto = false;
         encoderSpinControlLeft = new MotorControlPID(0.0,1.0,0.8,0.05,0.0005);
@@ -76,6 +77,7 @@ public class SpinAndShoot extends CommandBase {
             targets[i] = new Target(x_pos[i],y_pos[i],area[i]);
         }
         if(targets.length==0){
+            drivetrain.tankDrive(0.0,0.0);
             return;
         }
         else if(targets.length>1){
@@ -95,7 +97,7 @@ public class SpinAndShoot extends CommandBase {
             if(Math.abs(x)<0.05 && canShoot){
                 timer.start();
                 turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.8);
-                if(timer.get()>3){
+                if(timer.get()>1.5){
                     isFinished = true;
                 }
             }

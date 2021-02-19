@@ -109,8 +109,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand(int mode) {
     // return ballFinder;
-    return spinShoot;
-    // return auto2020;
+    // return spinShoot;
+    return auto2020;
     // return cmd;
 
     // switch(mode){
