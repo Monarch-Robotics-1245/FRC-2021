@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.*;
 import edu.wpi.first.wpilibj.trajectory.*;
@@ -58,6 +59,17 @@ public class BallFinder extends TrajectoryFollow {
       isDone = false;
       hasSeenBall = false;
     }
+
+    public void trackPrevious(){
+      if(!hasSeenBall){
+        return;
+      }
+      timer.start();
+      if(timer.hasElapsed(2.0)){
+        hasSeenBall = false;
+        timer.reset();
+      }
+    }
     @Override
     public void execute(){
       super.execute();
@@ -73,16 +85,30 @@ public class BallFinder extends TrajectoryFollow {
       if(targets.length>0){
         Arrays.sort(targets, new SortTarget());
         Target target = targets[0];
-        if(target.area>1000){
+        if(target.y<0.1 && hasSeenBall){
+          trackPrevious();
+        }
+        else if(target.area>1000){
           double distanceOut = target.distance / 39.37 + 0.5;
           double distanceSide = target.x * 320 / target.width * 7 / 39.37;
           PathPoint[] newPath = {
             new PathPoint(0,0,0.7,false,true),
             new PathPoint(distanceOut,distanceSide * -1,0.7,target.y > 0,true),
           };
+          if(target.y>0.1){
+            hasSeenBall = true;
+          }
           nt.getEntry("my_pos").setString(String.valueOf(distanceOut)+"x"+String.valueOf(distanceSide));
-          
           super.updatePath(newPath);
+        }
+        else{
+          trackPrevious();
+        }
+      }
+      else{
+        trackPrevious();
+        if(!hasSeenBall){
+          isDone = true;
         }
       }
     }

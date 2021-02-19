@@ -198,6 +198,7 @@ public class TrajectoryFollow extends CommandBase {
             rightPID.reset();
             if(index>=positions.length){
                 finished = true;
+                drivetrain.tankDriveVolts(0, 0);
             }
         }
     }
