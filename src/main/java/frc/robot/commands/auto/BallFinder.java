@@ -33,6 +33,9 @@ public class BallFinder extends TrajectoryFollow {
 
     private final double xTolerance = 0.1;
     private final double yTolerance = 0.1;
+    private boolean hasSeenBall;
+    private boolean isDone;
+    private Timer timer;
 
     /**
      * @param turret The Turret Subsystem {@link Turret} so that we can shoot balls
@@ -45,11 +48,15 @@ public class BallFinder extends TrajectoryFollow {
       // addCommands(new TrajectoryFollow(drivetrain, barrelWide));
       NetworkTableInstance inst = NetworkTableInstance.getDefault();
       nt = inst.getTable("Vision");
+      timer = new Timer();
     }
 
     @Override
     public void initialize(){
+      timer.reset();
       super.initialize();
+      isDone = false;
+      hasSeenBall = false;
     }
     @Override
     public void execute(){
@@ -80,8 +87,8 @@ public class BallFinder extends TrajectoryFollow {
       }
     }
 
-    // @Override
-    // public boolean isFinished() {
-    //     return false;
-    // }
+    @Override
+    public boolean isFinished() {
+        return isDone;
+    }
 }

@@ -18,7 +18,7 @@ public class TrajectoryFollow extends CommandBase {
     PathPoint[] positions;
 
     int index;
-    boolean finished;
+    public boolean finished;
 
     private MotorControlPID leftPID, rightPID;
 

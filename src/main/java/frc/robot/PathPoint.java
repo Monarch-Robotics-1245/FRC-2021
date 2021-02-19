@@ -60,7 +60,7 @@ public class PathPoint {
   }
   public static PathPoint[] empty(){
     PathPoint[] path = {
-      new PathPoint(0,0), new PathPoint(0,0.1)
+      new PathPoint(0,0), new PathPoint(0,10,0)
     };
     return path;
   }
