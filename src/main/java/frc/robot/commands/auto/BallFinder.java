@@ -37,6 +37,7 @@ public class BallFinder extends TrajectoryFollow {
     private boolean hasSeenBall;
     private boolean isDone;
     private Timer timer;
+    private final double speed = 0.5;
 
     /**
      * @param turret The Turret Subsystem {@link Turret} so that we can shoot balls
@@ -67,6 +68,7 @@ public class BallFinder extends TrajectoryFollow {
       timer.start();
       if(timer.hasElapsed(2.0)){
         hasSeenBall = false;
+        timer.stop();
         timer.reset();
       }
     }
@@ -80,20 +82,23 @@ public class BallFinder extends TrajectoryFollow {
       double[] width = nt.getEntry("width").getDoubleArray(new double[0]);
       Target[] targets = new Target[area.length];
       for(int i = 0; i<area.length; i++){
-          targets[i] = new Target(x_pos[i],y_pos[i],area[i],distances[i],width[i]);
+        if(x_pos.length<=i || y_pos.length<=i || distances.length<=i || width.length<=i){
+          continue;
+        }
+        targets[i] = new Target(x_pos[i],y_pos[i],area[i],distances[i],width[i]);
       }
-      if(targets.length>0){
+      if(targets.length>0 && targets[0] !=null){
         Arrays.sort(targets, new SortTarget());
         Target target = targets[0];
-        if(target.y<0.1 && hasSeenBall){
+        if(target.y<0.5 && hasSeenBall){
           trackPrevious();
         }
         else if(target.area>1000){
-          double distanceOut = target.distance / 39.37 + 0.5;
+          double distanceOut = target.distance / 39.37 + 0.3;
           double distanceSide = target.x * 320 / target.width * 7 / 39.37;
           PathPoint[] newPath = {
-            new PathPoint(0,0,0.7,false,true),
-            new PathPoint(distanceOut,distanceSide * -1,0.7,target.y > 0,true),
+            new PathPoint(0,0,speed,false,true),
+            new PathPoint(distanceOut,distanceSide * -1,speed,target.y > 0,true),
           };
           if(target.y>0.1){
             hasSeenBall = true;

@@ -131,6 +131,10 @@ public class TrajectoryFollow extends CommandBase {
     @Override
     public void execute() {
         //Get the current position the robot is trying to get to.
+        if(index>=positions.length){
+            drivetrain.tankDrive(0, 0);
+            return;
+        }
         PathPoint target = positions[index];
         //Get the error in the X (index 0), Y (index 1), total distance (index 3), and rotation (index 4)
         double[] errors = errorFromPoint(target);
