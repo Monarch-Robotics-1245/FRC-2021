@@ -8,9 +8,15 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.simulation.*;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.VecBuilder;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.commands.DriveTank;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -40,7 +46,25 @@ public class Drivetrain extends SubsystemBase {
   private final DifferentialDriveOdometry odometryPath;
   // private final DifferentialDriveOdometry odometryOverall;
 
-  private double leftPathOffset, rightPathOffset;
+  private EncoderSim leftEncoderSim = new EncoderSim(leftEncoder);
+  private EncoderSim rightEncoderSim = new EncoderSim(rightEncoder);
+  private ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
+
+  private Field2d field = new Field2d();
+  DifferentialDrivetrainSim driveSim = new DifferentialDrivetrainSim(
+    DCMotor.getCIM(2),
+    50.71, //gearing reduction (x:1)
+    3, //Moment of inertia
+    54.4311, //mass kg
+    0.1905, //wheel diamter in meters
+    0.555752, //distance between wheels
+    VecBuilder.fill(
+      0.001, 0.001, //x and y 
+      0.001, //heading
+      0.1, 0.1, //velocity m/s 
+      0.005, 0.005 //position
+      )
+  );
 
   private NetworkTable nt;
 
@@ -51,8 +75,7 @@ public class Drivetrain extends SubsystemBase {
     rightEncoder.setDistancePerPulse(0.1905*Math.PI/2048.0);
 
     resetEncoders();
-    leftPathOffset = 0.0;
-    rightPathOffset = 0.0;
+    SmartDashboard.putData("Field", field);
     odometryPath = new DifferentialDriveOdometry(gyro.getRotation2d());
     // odometryOverall = new DifferentialDriveOdometry(gyro.getRotation2d());
     //link the command to the subsystem
@@ -60,8 +83,6 @@ public class Drivetrain extends SubsystemBase {
     
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     nt = inst.getTable("Position");
-
-    // SmartDashboard.putData("DrivetrainSystem", this);
   }
 
   @Override
@@ -69,6 +90,7 @@ public class Drivetrain extends SubsystemBase {
     // Update the odometry in the periodic block
     //OLD:
     odometryPath.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
+    field.setRobotPose(odometryPath.getPoseMeters());
     //NEW:
     // odometryPath.update(gyro.getRotation2d(), leftEncoder.getDistance() - leftPathOffset, rightEncoder.getDistance() - rightPathOffset);
     
@@ -89,6 +111,19 @@ public class Drivetrain extends SubsystemBase {
     // nt.getEntry("x_overall").setDouble(xOverall);
     // nt.getEntry("y_overall").setDouble(yOverall);
     // nt.getEntry("r_overall").setDouble(rotationOverall);
+  }
+
+  @Override
+  public void simulationPeriodic(){
+    driveSim.setInputs(leftMotors.get() * RobotController.getInputVoltage(), - rightMotors.get() * RobotController.getInputVoltage());
+
+    driveSim.update(0.02);
+
+    leftEncoderSim.setDistance(driveSim.getLeftPositionMeters());
+    leftEncoderSim.setRate(driveSim.getLeftVelocityMetersPerSecond());
+    rightEncoderSim.setDistance(driveSim.getRightPositionMeters());
+    rightEncoderSim.setRate(driveSim.getRightVelocityMetersPerSecond());
+    gyroSim.setAngle(-driveSim.getHeading().getDegrees());
   }
 
   // Returns the currently-estimated pose of the robot.
@@ -131,6 +166,11 @@ public class Drivetrain extends SubsystemBase {
   public void resetEncoders() {
     leftEncoder.reset();
     rightEncoder.reset();
+    if(Robot.isSimulation()){
+      driveSim.setPose(new Pose2d(0,0, gyro.getRotation2d()));
+      // leftEncoderSim.resetData();
+      // rightEncoderSim.resetData();
+    }
   }
 
   // Gets the average distance of the two encoders.
