@@ -12,6 +12,7 @@ import frc.robot.commands.BallIntake;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.Solenoid;
 
 
@@ -31,6 +32,7 @@ public class BallSuck extends SubsystemBase {
   // The extending solenoid 
   private Solenoid release;
   private boolean released = false;
+  private NetworkTable nt;
 
   /**
    * @param intake Port for motor powering intake.
@@ -49,6 +51,9 @@ public class BallSuck extends SubsystemBase {
     // release.setPulseDuration(pulseDuration);
 
     setDefaultCommand(new BallIntake(this));
+
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    nt = inst.getTable("Other");
   }
 
   /**
@@ -75,6 +80,7 @@ public class BallSuck extends SubsystemBase {
   public void turnOnIntake()
   {
     intake.set(0.6);
+    nt.getEntry("Intake").setBoolean(true);
     // System.out.println("Spinning intake");
     intakeS = true;
   }
@@ -88,6 +94,7 @@ public class BallSuck extends SubsystemBase {
   {
     intake.set(0);
     intakeS = false;
+    nt.getEntry("Intake").setBoolean(false);
   }
 
   

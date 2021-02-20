@@ -168,19 +168,19 @@ public class TrajectoryFollow extends CommandBase {
         double leftSpeed = leftPID.getSpeed(encoders[0]);
         double rightSpeed = rightPID.getSpeed(encoders[1]);
 
-        nt.getEntry("leftTarget").setDouble(leftPID.getTarget());
-        nt.getEntry("rightTarget").setDouble(rightPID.getTarget());
-        nt.getEntry("leftEncoder").setDouble(encoders[0]);
-        nt.getEntry("rightEncoder").setDouble(encoders[1]);
-        nt.getEntry("index").setNumber(index);
-        nt.getEntry("errorX").setDouble(errors[0]);
-        nt.getEntry("errorY").setDouble(errors[1]);
-        nt.getEntry("errorDist").setDouble(errors[2]);
-        nt.getEntry("errorAngle").setDouble(errors[3]);
-        nt.getEntry("leftSpeed").setDouble(leftSpeed);
-        nt.getEntry("rightSpeed").setDouble(rightSpeed);
-        nt.getEntry("velocityScalar").setDouble(target.velocityScalar);
-        nt.getEntry("useIntake").setBoolean(target.intake);
+        // nt.getEntry("leftTarget").setDouble(leftPID.getTarget());
+        // nt.getEntry("rightTarget").setDouble(rightPID.getTarget());
+        // nt.getEntry("leftEncoder").setDouble(encoders[0]);
+        // nt.getEntry("rightEncoder").setDouble(encoders[1]);
+        // nt.getEntry("index").setNumber(index);
+        // nt.getEntry("errorX").setDouble(errors[0]);
+        // nt.getEntry("errorY").setDouble(errors[1]);
+        // nt.getEntry("errorDist").setDouble(errors[2]);
+        // nt.getEntry("errorAngle").setDouble(errors[3]);
+        // nt.getEntry("leftSpeed").setDouble(leftSpeed);
+        // nt.getEntry("rightSpeed").setDouble(rightSpeed);
+        // nt.getEntry("velocityScalar").setDouble(target.velocityScalar);
+        // nt.getEntry("useIntake").setBoolean(target.intake);
 
         //move the robot based on the speeds calculated above
         drivetrain.tankDrive(leftSpeed, rightSpeed);

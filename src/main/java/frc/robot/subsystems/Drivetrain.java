@@ -59,10 +59,10 @@ public class Drivetrain extends SubsystemBase {
     0.1905, //wheel diamter in meters
     0.555752, //distance between wheels
     VecBuilder.fill(
-      0.001, 0.001, //x and y 
+      0, 0, //x and y 
       0.001, //heading
       0.1, 0.1, //velocity m/s 
-      0.005, 0.005 //position
+      0.0, 0.00 //position
       )
   );
 

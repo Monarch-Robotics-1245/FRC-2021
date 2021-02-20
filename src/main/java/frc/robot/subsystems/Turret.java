@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.Shoot;
@@ -24,7 +25,6 @@ public class Turret extends SubsystemBase {
     private TalonSRX leftWheel;
     private TalonSRX inputWheel;
     private Encoder encoder = new Encoder(4, 5);
-
     /**
      *
      * @param leftWheelPort CAN port for the left wheel motor.
