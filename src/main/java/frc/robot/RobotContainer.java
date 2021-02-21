@@ -41,10 +41,11 @@ public class RobotContainer {
   private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
   private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
 
-  // PathPoint[] path = PathPoint.loadCSV("Bounce.csv");
+  PathPoint[] path = PathPoint.loadCSV("Bounce.csv");
   // PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
-  // TrajectoryOptions options = new TrajectoryOptions(drivetrain).addPath(path);
-  // Command cmd = new TrajectoryFollow(options);
+  // PathPoint[] path = PathPoint.loadCSV("Slalom.csv");
+  TrajectoryOptions options = new TrajectoryOptions(drivetrain).addPath(path);
+  Command cmd = new TrajectoryFollow(options);
 
   BallFinder ballFinder = new BallFinder(drivetrain, ballsuck);
 
@@ -56,9 +57,9 @@ public class RobotContainer {
     new SpinAndShoot(drivetrain, turret)
   );
 
-  PathPoint[] path = PathPoint.loadCSV("GalacticBBlue.csv");
-  TrajectoryOptions options = new TrajectoryOptions(drivetrain).addPath(path).addInitialRotation(180).addIntake(ballsuck);
-  Command cmd = new TrajectoryFollow(options);
+  // PathPoint[] path = PathPoint.loadCSV("GalacticBBlue.csv");
+  // TrajectoryOptions options = new TrajectoryOptions(drivetrain).addPath(path).addInitialRotation(180).addIntake(ballsuck);
+  // Command cmd = new TrajectoryFollow(options);
 
 
 //  private final SpinWheel autoCommand = new SpinWheel(wheelManipulator);

@@ -172,7 +172,7 @@ public class TrajectoryFollow extends CommandBase {
         // nt.getEntry("rightTarget").setDouble(rightPID.getTarget());
         // nt.getEntry("leftEncoder").setDouble(encoders[0]);
         // nt.getEntry("rightEncoder").setDouble(encoders[1]);
-        // nt.getEntry("index").setNumber(index);
+        nt.getEntry("index").setNumber(index);
         // nt.getEntry("errorX").setDouble(errors[0]);
         // nt.getEntry("errorY").setDouble(errors[1]);
         // nt.getEntry("errorDist").setDouble(errors[2]);
