@@ -9,7 +9,9 @@ package frc.robot.commands;
 
 import frc.robot.Constants;
 import frc.robot.OI;
+import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.wpilibj.GenericHID;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -46,20 +48,20 @@ public class DriveTank extends CommandBase {
      */
     @Override
     public void execute() {
-        // System.out.println("HELLO from DriveTank");
         if(!OI.rightJoystick.getTrigger() && !OI.leftJoystick.getTrigger()){
-            drivetrain.tankDrive(
-                -OI.deadZone(OI.leftJoystick.getY(), Constants.getDeadZone()), 
-                -OI.deadZone(OI.rightJoystick.getY(), Constants.getDeadZone())
-                );
+            if(Robot.isSimulation()){
+                drivetrain.tankDrive(
+                    -OI.deadZone(OI.xboxController.getY(GenericHID.Hand.kLeft), Constants.getDeadZone()), 
+                    -OI.deadZone(OI.xboxController.getY(GenericHID.Hand.kRight), Constants.getDeadZone())
+                    );
+            }
+            else{
+                drivetrain.tankDrive(
+                    -OI.deadZone(OI.leftJoystick.getY(), Constants.getDeadZone()), 
+                    -OI.deadZone(OI.rightJoystick.getY(), Constants.getDeadZone())
+                    );
+            }
         }
-        // System.out.println("L:");
-        // System.out.println(drivetrain.getLeftEncoder().getRate());
-        // System.out.println("R:");
-        // System.out.println(drivetrain.getRightEncoder().getRate());
-        // System.out.println("GYRO: "+drivetrain.getGyro().getAngle());
-        // System.out.println(drivetrain.getPose());
-        // System.out.println("R:"+drivetrain.getRightEncoder().getRate().toString());
     }
 
 

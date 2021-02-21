@@ -54,7 +54,7 @@ public class Drivetrain extends SubsystemBase {
   DifferentialDrivetrainSim driveSim = new DifferentialDrivetrainSim(
     DCMotor.getCIM(2),
     50.71, //gearing reduction (x:1)
-    3, //Moment of inertia
+    7, //Moment of inertia
     54.4311, //mass kg
     0.1905, //wheel diamter in meters
     0.555752, //distance between wheels
