@@ -43,10 +43,11 @@ public class RobotContainer {
   private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
 
   // PathPoint[] path = PathPoint.loadCSV("Bounce.csv");
-  // PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
-  PathPoint[] path = PathPoint.loadCSV("Slalom.csv");
+  PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
+  // PathPoint[] path = PathPoint.loadCSV("Slalom.csv");
   TrajectoryOptions options = new TrajectoryOptions(drivetrain).addPath(path);
   Command cmd = new TrajectoryFollow(options);
+  AutoInit autoInit = new AutoInit(ballsuck,drivetrain);
 
   BallFinder ballFinder = new BallFinder(drivetrain, ballsuck);
 
@@ -107,7 +108,8 @@ public class RobotContainer {
     // return ballFinder;
     // return spinShoot;
     // return auto2020;
-    return cmd;
+    // return cmd;
+    return autoInit;
 
     // switch(mode){
     //   case AutoMode.galactic:
