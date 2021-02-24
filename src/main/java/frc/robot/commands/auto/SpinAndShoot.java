@@ -31,10 +31,14 @@ public class SpinAndShoot extends CommandBase {
 
     private final Turret turret;
     private MotorControlPID shootControl;
-    final double targetSpinSpeed = 28.00;
+    final double targetSpinSpeed;
     private boolean canShoot;
 
     public SpinAndShoot(Drivetrain drivetrain, Turret turret) {
+        this(drivetrain,turret,28);
+    }
+
+    public SpinAndShoot(Drivetrain drivetrain, Turret turret, double spinSpeed) {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         nt = inst.getTable("Vision");
         this.turret = turret;
@@ -42,7 +46,9 @@ public class SpinAndShoot extends CommandBase {
         addRequirements(drivetrain,turret);
         isFinished = false;
         timer = new Timer();
+        this.targetSpinSpeed = spinSpeed;
     }
+
 
     /**
      * The initial subroutine of a command.  Called once when the command is initially scheduled.
