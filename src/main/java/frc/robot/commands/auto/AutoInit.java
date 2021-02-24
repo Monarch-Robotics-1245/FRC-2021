@@ -50,6 +50,7 @@ public class AutoInit extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        timer.reset();
         timer.start();
         drivetrain.resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d(0.0, 0.0)));
     }
@@ -70,6 +71,6 @@ public class AutoInit extends CommandBase {
     @Override
     public boolean isFinished() {
         //returns false while the system hasn't activated fully yet
-        return timer.get()>0.1;
+        return timer.get()>0.2;
     }
 }
