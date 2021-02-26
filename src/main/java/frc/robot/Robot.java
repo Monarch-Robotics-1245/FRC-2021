@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().run();
 
-    if(OI.leftJoystick.getRawButtonPressed(8)){
+    if(OI.leftJoystick.getRawButtonPressed(9)){
       int cameraIndex = nt.getEntry("camera_index").getNumber(0).intValue();
       cameraIndex = (cameraIndex + 1) % 3;
       nt.getEntry("camera_index").setNumber(cameraIndex);

@@ -37,6 +37,7 @@ public class BallFinder extends TrajectoryFollow {
     private boolean hasSeenBall;
     private boolean isDone;
     private Timer timer;
+    private Timer initTimer;
 
     /**
      * @param turret The Turret Subsystem {@link Turret} so that we can shoot balls
@@ -50,11 +51,14 @@ public class BallFinder extends TrajectoryFollow {
       NetworkTableInstance inst = NetworkTableInstance.getDefault();
       nt = inst.getTable("Vision");
       timer = new Timer();
+      initTimer = new Timer();
     }
 
     @Override
     public void initialize(){
       timer.reset();
+      initTimer.reset();
+      initTimer.start();
       super.initialize();
       isDone = false;
       hasSeenBall = false;
@@ -82,9 +86,11 @@ public class BallFinder extends TrajectoryFollow {
       Target[] targets = new Target[area.length];
       for(int i = 0; i<area.length; i++){
         if(x_pos.length<=i || y_pos.length<=i || distances.length<=i || width.length<=i){
-          continue;
+          targets[i] = new Target(0,0,0,0,0);
         }
-        targets[i] = new Target(x_pos[i],y_pos[i],area[i],distances[i],width[i]);
+        else{
+          targets[i] = new Target(x_pos[i],y_pos[i],area[i],distances[i],width[i]);
+        }
       }
       if(targets.length>0 && targets[0] !=null){
         Arrays.sort(targets, new SortTarget());
@@ -96,12 +102,15 @@ public class BallFinder extends TrajectoryFollow {
           double distanceOut = target.distance / 39.37 + 0.3;
           double distanceSide = target.x * 320 / target.width * 7 / 39.37;
           double speed = 1.0;
-          // if(target.y<-0.5){
-          //   speed = 2.0;
-          // }
-          // else if(target.y<0.1){
-          //   speed = 1.5;
-          // }
+          if(initTimer.get()<0.5){
+            speed = 0.6;
+          }
+          else if(target.y<-0.5){
+            speed = 2.0;
+          }
+          else if(target.y<0.1){
+            speed = 1.5;
+          }
           PathPoint[] newPath = {
             new PathPoint(0,0,speed,false,true),
             new PathPoint(distanceOut,distanceSide * -1,speed,target.y > 0,true),

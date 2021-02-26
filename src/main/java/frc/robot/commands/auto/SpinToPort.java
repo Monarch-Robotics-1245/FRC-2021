@@ -219,6 +219,12 @@ class SortTarget implements Comparator<Target>
     // Sorts targets by area (largest is at index 0)
     public int compare(Target a, Target b)
     {
+        if(a==null){
+            return 1;
+        }
+        if(b == null){
+            return -1;
+        }
         if(a.area == b.area){
             return 0;
         }

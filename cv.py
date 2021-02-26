@@ -257,7 +257,7 @@ if __name__ == "__main__":
     print("Doing computer vision things")
 
     focal = 60 * 94 / 8.25
-    focalBall = 76 * 55 / 7
+    focalBall = 59 * 69 / 7
 
     camera_index = vision_nt.getNumber("camera_index", 0)
 
@@ -289,7 +289,7 @@ if __name__ == "__main__":
             binary_img = cv2.inRange(hsv_img, (41, 100, 30), (110, 255, 255)) 
            # binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
         elif (camera_index == 1 or camera_index == 2):
-            binary_img = cv2.inRange(hsv_img, (20, 70, 70), (43, 255, 255))
+            binary_img = cv2.inRange(hsv_img, (20, 160, 70), (43, 255, 255))
 
         # outside:
         # binary_img = cv2.inRange(hsv_img, (55, 20, 20), (100, 255, 255))
