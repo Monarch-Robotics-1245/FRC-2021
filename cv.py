@@ -306,7 +306,7 @@ if __name__ == "__main__":
 
             area = cv2.contourArea(contour)
             # Ignore small contours that could be because of noise/bad thresholding
-            if area < 50:
+            if area < 50 or (area<200 and camera_index==2):
                 continue
 
             # cv2.drawContours(output_img, contour, -1, color=(255, 255, 255), thickness=-1)
