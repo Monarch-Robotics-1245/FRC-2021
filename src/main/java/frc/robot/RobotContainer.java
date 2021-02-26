@@ -110,10 +110,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(int mode) {
-    // return ballFinder;
+    return ballFinder;
     // return spinShoot;
     // return cmd2;
-    return auto2020;
+    // return auto2020;
     // return cmd;
     // return autoInit;
 

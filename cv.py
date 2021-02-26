@@ -257,7 +257,7 @@ if __name__ == "__main__":
     print("Doing computer vision things")
 
     focal = 60 * 94 / 8.25
-    focalBall = 69 * 57 / 7
+    focalBall = 76 * 55 / 7
 
     camera_index = vision_nt.getNumber("camera_index", 0)
 
