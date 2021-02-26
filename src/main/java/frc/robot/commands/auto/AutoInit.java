@@ -52,6 +52,7 @@ public class AutoInit extends CommandBase {
     public void initialize() {
         timer.reset();
         timer.start();
+        drivetrain.getGyro().reset();
         drivetrain.resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d(0.0, 0.0)));
     }
 

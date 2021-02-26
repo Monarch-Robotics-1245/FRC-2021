@@ -102,7 +102,7 @@ public class SpinAndShoot extends CommandBase {
             
             if(Math.abs(x)<0.05 && canShoot){
                 timer.start();
-                turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.8);
+                turret.getInputWheelMotor().set(ControlMode.PercentOutput,1.0);
                 if(timer.get()>1.5){
                     isFinished = true;
                 }
@@ -185,6 +185,7 @@ public class SpinAndShoot extends CommandBase {
         System.out.println("DONE WITH ALIGN");
         nt.getEntry("spin").setDouble(0.0);
         turret.spinMotors(0.0,0.0);
+        turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.0);
         Robot.canShootAuto = true;
     }
 }

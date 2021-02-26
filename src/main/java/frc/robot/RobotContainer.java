@@ -51,12 +51,17 @@ public class RobotContainer {
 
   BallFinder ballFinder = new BallFinder(drivetrain, ballsuck);
 
+  Command cmd2 = new TrajectoryFollow((new TrajectoryOptions(drivetrain)).addPath(PathPoint.loadCSV("Auto2020.csv")).addIntake(ballsuck).useGyro().addInitialRotation(180.0));
+
   
   SpinAndShoot spinShoot = new SpinAndShoot(drivetrain, turret);
   SequentialCommandGroup auto2020 = new SequentialCommandGroup(
-    new SpinAndShoot(drivetrain, turret),
+    new ParallelCommandGroup(
+      new SpinAndShoot(drivetrain, turret),
+      new AutoInit(ballsuck,drivetrain)
+    ),
     new TrajectoryFollow((new TrajectoryOptions(drivetrain)).addPath(PathPoint.loadCSV("Auto2020.csv")).addIntake(ballsuck).useGyro().addInitialRotation(180.0)),
-    new SpinAndShoot(drivetrain, turret)
+    new SpinAndShoot(drivetrain, turret,25.5)
   );
 
   // PathPoint[] path = PathPoint.loadCSV("GalacticARed.csv");
@@ -107,9 +112,10 @@ public class RobotContainer {
   public Command getAutonomousCommand(int mode) {
     // return ballFinder;
     // return spinShoot;
-    // return auto2020;
+    // return cmd2;
+    return auto2020;
     // return cmd;
-    return autoInit;
+    // return autoInit;
 
     // switch(mode){
     //   case AutoMode.galactic:
