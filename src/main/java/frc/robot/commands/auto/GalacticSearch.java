@@ -56,28 +56,28 @@ public class GalacticSearch extends TrajectoryFollow {
       int pathToFollow = 0; // 0: None, 1: A-Red, 2: B-Red, 3:A-Blue, 4:B-Blue
       for(int i = 0; i<area.length; i++){
         Target target =  new Target(x_pos[i],y_pos[i],area[i]);
-        if(Math.abs(target.x - 0.478)<xTolerance && Math.abs(target.y - 0.129)<yTolerance){
+        if(Math.abs(target.x - 0.615)<xTolerance && Math.abs(target.y - (-0.104))<yTolerance){
           locations[i] = "D5";
         }
-        else if(Math.abs(target.x - (-0.184))<xTolerance && Math.abs(target.y - 0.838)<yTolerance){
+        else if(Math.abs(target.x - (0.053))<xTolerance && Math.abs(target.y - 0.491)<yTolerance){
           locations[i] = "C3";
         }
-        else if(Math.abs(target.x - (-0.553))<xTolerance && Math.abs(target.y - (-0.212))<yTolerance){
+        else if(Math.abs(target.x - (-0.222))<xTolerance && Math.abs(target.y - (-0.3667))<yTolerance){
           locations[i] = "B7";
         }
-        else if(Math.abs(target.x - (0.9))<xTolerance && Math.abs(target.y - (0.0083))<yTolerance){
-          locations[i] = "E6";
-        }
-        else if(Math.abs(target.x - (-0.0813))<xTolerance && Math.abs(target.y - (-0.3292))<yTolerance){
+        // else if(Math.abs(target.x - (0.9))<xTolerance && Math.abs(target.y - (0.0083))<yTolerance){
+        //   locations[i] = "E6";
+        // }
+        else if(Math.abs(target.x - (0.097))<xTolerance && Math.abs(target.y - (-0.487))<yTolerance){
           locations[i] = "C9";
         }
-        else if(Math.abs(target.x - (-0.4563))<xTolerance && Math.abs(target.y - (-0.2875))<yTolerance){
+        else if(Math.abs(target.x - (-0.172))<xTolerance && Math.abs(target.y - (-0.433))<yTolerance){
           locations[i] = "B8";
         }
-        else if(Math.abs(target.x - (0.3875))<xTolerance && Math.abs(target.y - (-0.0333))<yTolerance){
+        else if(Math.abs(target.x - (0.537))<xTolerance && Math.abs(target.y - (-0.241))<yTolerance){
           locations[i] = "D6";
         }
-        else if(Math.abs(target.x - (0.2219))<xTolerance && Math.abs(target.y - (-0.3542))<yTolerance){
+        else if(Math.abs(target.x - (0.365))<xTolerance && Math.abs(target.y - (-0.52))<yTolerance){
           locations[i] = "D10";
         }
         else{
