@@ -42,8 +42,8 @@ public class RobotContainer {
   private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
   private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
 
-  // PathPoint[] path = PathPoint.loadCSV("Bounce.csv");
-  PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
+  PathPoint[] path = PathPoint.loadCSV("Bounce.csv");
+  // PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
   // PathPoint[] path = PathPoint.loadCSV("Slalom.csv");
   TrajectoryOptions options = new TrajectoryOptions(drivetrain).addPath(path);
   Command cmd = new TrajectoryFollow(options);
