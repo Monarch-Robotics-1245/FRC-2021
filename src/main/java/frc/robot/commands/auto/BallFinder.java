@@ -1,26 +1,9 @@
 package frc.robot.commands.auto;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.geometry.*;
-import edu.wpi.first.wpilibj.trajectory.*;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.PathPoint;
 import frc.robot.Target;
 import frc.robot.TrajectoryOptions;
@@ -32,8 +15,8 @@ public class BallFinder extends TrajectoryFollow {
 
     private final NetworkTable nt;
 
-    private final double xTolerance = 0.1;
-    private final double yTolerance = 0.1;
+    // private final double xTolerance = 0.1;
+    // private final double yTolerance = 0.1;
     private boolean hasSeenBall;
     private boolean isDone;
     private Timer timer;

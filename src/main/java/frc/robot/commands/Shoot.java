@@ -8,8 +8,10 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.MotorControlPID;
 import frc.robot.OI;
 import frc.robot.subsystems.Turret;
@@ -26,14 +28,10 @@ public class Shoot extends CommandBase {
     private final Turret turret;
     private MotorControlPID motorControl;
     //the target revolutions per second on the encoders.
-    final double targetSpinSpeedAuto = 28.00;//GABE CHANGE THIS
+    double targetSpinSpeedAuto = 28.00;//GABE CHANGE THIS
     final double targetSpinSpeedTrench = 26.0;
 
-
-    // Timer
-    private Timer timer;
-
-    // VideoCapture camera;
+    NetworkTable nt;
 
     /**
      * Creates a new Shoot.
@@ -44,22 +42,27 @@ public class Shoot extends CommandBase {
      * 
      */
     public Shoot(Turret turret) {
+
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        nt = inst.getTable("Vision");
+        nt.getEntry("Shooter").setDouble(28.0);
         this.turret = turret;
+        motorControl = new MotorControlPID(targetSpinSpeedAuto,1.0,1.0,0.1,0.001);
+        nt.addEntryListener("Shooter", (table, key, entry, value, flags) -> {
+            targetSpinSpeedAuto = value.getDouble();
+            motorControl.setTarget(value.getDouble());
+            System.out.println("Shooter changed value: " + value.getValue());
+         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
         //timer = new Timer();
         //set the speed of each wheel to our guess speed
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(turret);
-        motorControl = new MotorControlPID(targetSpinSpeedAuto,1.0,1.0,0.1,0.001);
-
-        timer = new Timer();
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-
-        //timer.reset();
 
     }
 
@@ -76,31 +79,8 @@ public class Shoot extends CommandBase {
         if (OI.rightJoystick.getTrigger()
         || OI.rightJoystick.getRawButton(10))
         {
-
-            // if(OI.leftJoystick.getTrigger()){
-            //     motorControl.setTarget(targetSpinSpeedAuto);
-            // }
-            // else{
-            //     motorControl.setTarget(targetSpinSpeedTrench);
-            // }
-
-            //Test timer stuff
-            // double startTime = timer.getMatchTime();
             double leftSpeed = motorControl.getSpeed(turret.getEncoderRate());
-            // double elapseTime = timer.getMatchTime() - startTime;
-
-            // System.out.println("PID elapse time: " + elapseTime);
-
-            // double rightSpeed = motorControlRight.getSpeed(turret.getEncoderRightRate());
             turret.spinMotors(leftSpeed,leftSpeed);
-            // turret.spinMotors(0.47,0.47);
-            // SmartDashboard.putNumber("Left Speed", leftSpeed);
-            // SmartDashboard.putNumber("Left RPS", turret.getEncoderRate());
-
-            // System.out.println("RPM:"+turret.getEncoderLeftRate());
-
-
-
             if((OI.rightJoystick.getRawButton(5) || OI.xboxController.getAButton())/* && Math.abs(turret.getEncoderRate()-targetSpinSpeedAuto)<1.5*/){
                 turret.getInputWheelMotor().set(ControlMode.PercentOutput,1.0);
             }
@@ -115,7 +95,6 @@ public class Shoot extends CommandBase {
             motorControl.reset();
 
             turret.getInputWheelMotor().set(ControlMode.PercentOutput, 0.0);
-            // turret.getInputWheelMotor().set(ControlMode.PercentOutput,1.0);
         }
     
     }

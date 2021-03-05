@@ -7,17 +7,9 @@
 
 package frc.robot.commands.auto;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants;
-
-import frc.robot.OI;
-import frc.robot.commands.BallIntake;
 import frc.robot.subsystems.BallSuck;
 import frc.robot.subsystems.Drivetrain;
-import edu.wpi.first.wpilibj.Solenoid;
-
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;

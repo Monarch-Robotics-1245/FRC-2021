@@ -7,11 +7,7 @@
 
 package frc.robot;
 
-import java.util.Arrays;
-
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.enums.AutoMode;
 import frc.robot.enums.WheelManipulatorState;
 import frc.robot.subsystems.WheelManipulator;
 

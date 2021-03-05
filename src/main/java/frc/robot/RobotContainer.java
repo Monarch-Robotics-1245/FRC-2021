@@ -10,8 +10,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
-import frc.robot.commands.auto.TrajectoryTest;
-import frc.robot.enums.AutoMode;
 import frc.robot.commands.auto.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,7 +37,6 @@ public class RobotContainer {
   private final BallIntake ballintake = new BallIntake(ballsuck);
 
   private final SpinToPort autoSpin = new SpinToPort(drivetrain);
-  private final TrajectoryTest autoTrajectoryTest = new TrajectoryTest(turret, drivetrain, ballsuck);
   private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
 
   PathPoint[] path = PathPoint.loadCSV("Bounce.csv");
