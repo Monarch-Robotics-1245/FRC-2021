@@ -51,16 +51,16 @@ public class GalacticSearch extends TrajectoryFollow {
         // else if(Math.abs(target.x - (0.9))<xTolerance && Math.abs(target.y - (0.0083))<yTolerance){
         //   locations[i] = "E6";
         // }
-        else if(Math.abs(target.x - (0.097))<xTolerance && Math.abs(target.y - (-0.487))<yTolerance){
+        else if(Math.abs(target.x - (0.138))<xTolerance && Math.abs(target.y - (-0.395))<yTolerance){
           locations[i] = "C9";
         }
-        else if(Math.abs(target.x - (-0.172))<xTolerance && Math.abs(target.y - (-0.433))<yTolerance){
+        else if(Math.abs(target.x - (-0.168))<xTolerance && Math.abs(target.y - (-0.354))<yTolerance){
           locations[i] = "B8";
         }
-        else if(Math.abs(target.x - (0.537))<xTolerance && Math.abs(target.y - (-0.241))<yTolerance){
+        else if(Math.abs(target.x - (0.628))<xTolerance && Math.abs(target.y - (-0.075))<yTolerance){
           locations[i] = "D6";
         }
-        else if(Math.abs(target.x - (0.365))<xTolerance && Math.abs(target.y - (-0.52))<yTolerance){
+        else if(Math.abs(target.x - (0.380))<xTolerance && Math.abs(target.y - (-0.404))<yTolerance){
           locations[i] = "D10";
         }
         else{
