@@ -111,8 +111,9 @@ public class RobotContainer {
     // return spinShoot;
     // return cmd2;
     // return auto2020;
-    return cmd;
+    // return cmd;
     // return autoInit;
+    return galactic;
 
     // switch(mode){
     //   case AutoMode.galactic:
