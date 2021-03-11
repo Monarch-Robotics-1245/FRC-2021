@@ -37,7 +37,10 @@ public class RobotContainer {
   private final BallIntake ballintake = new BallIntake(ballsuck);
 
   private final SpinToPort autoSpin = new SpinToPort(drivetrain);
-  private final GalacticSearch galactic = new GalacticSearch(drivetrain, ballsuck);
+  private final SequentialCommandGroup galactic = new SequentialCommandGroup(
+    new AutoInit(ballsuck, drivetrain),
+    new GalacticSearch(drivetrain, ballsuck)
+  );
 
   PathPoint[] path = PathPoint.loadCSV("Bounce.csv");
   // PathPoint[] path = PathPoint.loadCSV("BarrelFull.csv");
