@@ -51,7 +51,7 @@ public class GalacticSearch extends TrajectoryFollow {
         // else if(Math.abs(target.x - (0.9))<xTolerance && Math.abs(target.y - (0.0083))<yTolerance){
         //   locations[i] = "E6";
         // }
-        else if(Math.abs(target.x - (0.138))<xTolerance && Math.abs(target.y - (-0.395))<yTolerance){
+        else if(Math.abs(target.x - (0.065))<xTolerance && Math.abs(target.y - (-0.471))<yTolerance){
           locations[i] = "C9";
         }
         else if(Math.abs(target.x - (-0.168))<xTolerance && Math.abs(target.y - (-0.354))<yTolerance){

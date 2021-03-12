@@ -94,7 +94,13 @@ public class Shoot extends CommandBase {
             turret.spinMotors(0.0,0.0);
             motorControl.reset();
 
-            turret.getInputWheelMotor().set(ControlMode.PercentOutput, 0.0);
+            // turret.getInputWheelMotor().set(ControlMode.PercentOutput, 0.0);
+            if((OI.rightJoystick.getRawButton(5) || OI.xboxController.getAButton())/* && Math.abs(turret.getEncoderRate()-targetSpinSpeedAuto)<1.5*/){
+                turret.getInputWheelMotor().set(ControlMode.PercentOutput,1.0);
+            }
+            else {
+                turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.0); 
+            }
         }
     
     }
