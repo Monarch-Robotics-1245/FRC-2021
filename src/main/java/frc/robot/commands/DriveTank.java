@@ -24,6 +24,8 @@ public class DriveTank extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final Drivetrain drivetrain;
 
+    private boolean useWheel;
+
 
     /**
      * Creates a new DriveTank.
@@ -34,6 +36,7 @@ public class DriveTank extends CommandBase {
         drivetrain = drive;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drive);
+        useWheel = false;
 
     }
 
@@ -48,12 +51,37 @@ public class DriveTank extends CommandBase {
      */
     @Override
     public void execute() {
+        if(OI.rightJoystick.getRawButtonPressed(6)){
+            useWheel = !useWheel;
+        }
+
         if(!OI.rightJoystick.getTrigger() && !OI.leftJoystick.getTrigger()){
             if(Robot.isSimulation()){
                 drivetrain.tankDrive(
                     -OI.deadZone(OI.xboxController.getY(GenericHID.Hand.kLeft), Constants.getDeadZone()), 
                     -OI.deadZone(OI.xboxController.getY(GenericHID.Hand.kRight), Constants.getDeadZone())
                     );
+            }
+            else if(useWheel){
+                double leftSide, rightSide;
+                double accel = -OI.deadZone(OI.wheel.getY(), 0.05);
+                double twist = (OI.wheel.getX() - 0.55) * 2;
+                leftSide = accel;
+                rightSide = accel;
+                double slowerSide = 1 - Math.abs(twist);
+                if(slowerSide>1){
+                    slowerSide = 1;
+                }
+                else if(slowerSide<0){
+                    slowerSide = 0;
+                }
+                if(twist>0){
+                    rightSide *= slowerSide;
+                }
+                else{
+                    leftSide *= slowerSide;
+                }
+                drivetrain.tankDrive(leftSide, rightSide);
             }
             else{
                 drivetrain.tankDrive(

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class OI {
 
     public static XboxController xboxController;
+    public static Joystick wheel;
 
     // rightJoystick is right
     // leftJoystick is left
@@ -33,6 +34,7 @@ public class OI {
     public OI(Drivetrain drivetrain){
         // Xbox controller
         xboxController = new XboxController(0);
+        wheel = new Joystick(3);
 
         // Right joystick
         rightJoystick = new Joystick(1);
