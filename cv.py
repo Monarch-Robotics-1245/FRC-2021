@@ -286,7 +286,7 @@ if __name__ == "__main__":
 
         # inside:
         if camera_index == 0:
-            binary_img = cv2.inRange(hsv_img, (0, 0, 230), (255, 100, 255)) 
+            binary_img = cv2.inRange(hsv_img, (0, 0, 90), (255, 100, 255)) 
            # binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
         elif (camera_index == 1 or camera_index == 2):
             binary_img = cv2.inRange(hsv_img, (20, 160, 70), (43, 255, 255))
@@ -306,6 +306,8 @@ if __name__ == "__main__":
 
             area = cv2.contourArea(contour)
             perimeter = cv2.arcLength(contour, True)
+            if(perimeter==0):
+                continue
             circularity = 4 * 3.1415926535 * area / (perimeter * perimeter)
             # Ignore small contours that could be because of noise/bad thresholding
             if area < 50 or (area<150 and camera_index==2):

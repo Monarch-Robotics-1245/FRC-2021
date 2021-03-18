@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
   private OI oi;
   private NetworkTable nt;
   private boolean cvExposureAuto;
-  private UsbCamera intakeCamera;
+  // private UsbCamera intakeCamera;
 
 
   public static double[] position = new double[2];
@@ -60,8 +60,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     oi = new OI(m_robotContainer.getDrivetrain());
 
-    intakeCamera = CameraServer.getInstance().startAutomaticCapture("Intake View", 0);
-    intakeCamera.setResolution(320, 240);
+    // intakeCamera = CameraServer.getInstance().startAutomaticCapture("Intake View", 0);
+    // intakeCamera.setResolution(320, 240);
 
     cvExposureAuto = false;
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
