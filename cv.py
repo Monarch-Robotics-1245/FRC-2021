@@ -305,8 +305,12 @@ if __name__ == "__main__":
         for contour in contour_list:
 
             area = cv2.contourArea(contour)
+            perimeter = cv2.arcLength(contour, True)
+            circularity = 4 * 3.1415926535 * area / (perimeter * perimeter)
             # Ignore small contours that could be because of noise/bad thresholding
             if area < 50 or (area<150 and camera_index==2):
+                continue
+            elif camera_index == 0 and ((not (0.8 < circularity < 1.2) or area > 10000)):
                 continue
 
             # cv2.drawContours(output_img, contour, -1, color=(255, 255, 255), thickness=-1)
