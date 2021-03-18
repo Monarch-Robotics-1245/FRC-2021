@@ -64,16 +64,17 @@ public class DriveTank extends CommandBase {
             }
             else if(useWheel){
                 double leftSide, rightSide;
-                double accel = -OI.deadZone(OI.wheel.getY(), 0.05);
-                double twist = (OI.wheel.getX() - 0.55) * 2;
+                double accel = OI.deadZone(OI.xboxController.getTriggerAxis(GenericHID.Hand.kRight), 0.05) - OI.deadZone(OI.xboxController.getTriggerAxis(GenericHID.Hand.kLeft), 0.05);
+                // double accel = -OI.deadZone(OI.wheel.getY(), 0.05);
+                double twist = (OI.wheel.getX())*2;
                 leftSide = accel;
                 rightSide = accel;
                 double slowerSide = 1 - Math.abs(twist);
                 if(slowerSide>1){
                     slowerSide = 1;
                 }
-                else if(slowerSide<0){
-                    slowerSide = 0;
+                else if(slowerSide<-0.5){
+                    slowerSide = -0.5;
                 }
                 if(twist>0){
                     rightSide *= slowerSide;

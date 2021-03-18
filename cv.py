@@ -286,7 +286,7 @@ if __name__ == "__main__":
 
         # inside:
         if camera_index == 0:
-            binary_img = cv2.inRange(hsv_img, (41, 100, 30), (110, 255, 255)) 
+            binary_img = cv2.inRange(hsv_img, (0, 0, 230), (255, 100, 255)) 
            # binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
         elif (camera_index == 1 or camera_index == 2):
             binary_img = cv2.inRange(hsv_img, (20, 160, 70), (43, 255, 255))
@@ -315,10 +315,10 @@ if __name__ == "__main__":
             center, size, angle = rect
             center = [int(dim) for dim in center]  # Convert to int so we can draw
 
-            if(camera_index == 0 and (size[0] < 50 or size[1] < 30)):
-                continue
-            elif ((camera_index == 1 or camera_index == 2) and (size[1]/size[0]<=0.5 or size[1]/size[0]>=2)):
-                continue
+            # if(camera_index == 0 and (size[0] < 50 or size[1] < 30)):
+            #     continue
+            # elif ((camera_index == 1 or camera_index == 2) and (size[1]/size[0]<=0.5 or size[1]/size[0]>=2)):
+            #     continue
 
             # Draw rectangle and circle
             # cv2.drawContours(output_img, np.int0(cv2.boxPoints(rect)), -1, (0, 0, 255), 2)
