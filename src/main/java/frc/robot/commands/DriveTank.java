@@ -13,6 +13,8 @@ import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTable;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -29,9 +31,10 @@ public class DriveTank extends CommandBase {
     
     private MotorControlPID leftPID, rightPID;
 
-    private double targetVelocity = 2;
+    private double targetVelocity = 1;
 
-    private double fasterVelocity = 4;
+    private double fasterVelocity = 2;
+    private NetworkTable nt;
 
 
     /**
@@ -43,13 +46,15 @@ public class DriveTank extends CommandBase {
         drivetrain = drive;
         addRequirements(drive);
         useWheel = false;
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        nt = inst.getTable("PathFollowing");
 
     }
 
     @Override
     public void initialize() {
-        leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.03,0.02);
-        rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.03,0.02);
+        leftPID = new MotorControlPID(targetVelocity,1.0,1.0,0.03,0.04);
+        rightPID = new MotorControlPID(targetVelocity,1.0,1.0,0.03,0.04);
     }
 
     
@@ -61,13 +66,17 @@ public class DriveTank extends CommandBase {
         if(OI.rightJoystick.getRawButtonPressed(6)){
             useWheel = !useWheel;
         }
+        else if(OI.rightJoystick.getRawButtonPressed(7)){
+            leftPID.reset();
+            rightPID.reset();
+        }
 
         if(useWheel){
+            double leftEncoder = drivetrain.getLeftEncoder().getRate();
+            double rightEncoder = drivetrain.getRightEncoder().getRate();
             if(OI.rightJoystick.getTrigger()){
-                double leftEncoder = drivetrain.getLeftEncoder().getRate();
-                double rightEncoder = drivetrain.getRightEncoder().getRate();
                 double speed = OI.rightJoystick.getRawButton(3) ? fasterVelocity : targetVelocity;
-                double twist = (OI.rightJoystick.getX())*2;
+                double twist = OI.deadZone(OI.rightJoystick.getX(),0.05);
                 double slowerSide = 1 - Math.abs(twist);
                 if(slowerSide>1){
                     slowerSide = 1;
@@ -83,14 +92,24 @@ public class DriveTank extends CommandBase {
                     leftPID.setTarget(speed*slowerSide);
                     rightPID.setTarget(speed);
                 }
+                nt.getEntry("leftTarget").setDouble(leftPID.getTarget());
+                nt.getEntry("rightTarget").setDouble(rightPID.getTarget());
                 double leftSpeed = leftPID.getSpeed(leftEncoder);
                 double rightSpeed = rightPID.getSpeed(rightEncoder);
+                nt.getEntry("leftSpeed").setDouble(leftSpeed);
+                nt.getEntry("rightSpeed").setDouble(rightSpeed);
                 drivetrain.tankDrive(leftSpeed, rightSpeed);
             }
             else{
-                leftPID.reset();
-                rightPID.reset();
-                drivetrain.tankDrive(0, 0);
+                leftPID.setTarget(0);
+                rightPID.setTarget(0);
+                nt.getEntry("leftTarget").setDouble(leftPID.getTarget());
+                nt.getEntry("rightTarget").setDouble(rightPID.getTarget());
+                double leftSpeed = leftPID.getSpeed(leftEncoder);
+                double rightSpeed = rightPID.getSpeed(rightEncoder);
+                nt.getEntry("leftSpeed").setDouble(leftSpeed);
+                nt.getEntry("rightSpeed").setDouble(rightSpeed);
+                drivetrain.tankDrive(leftSpeed, rightSpeed);
             }
 
             // double leftSide, rightSide;
