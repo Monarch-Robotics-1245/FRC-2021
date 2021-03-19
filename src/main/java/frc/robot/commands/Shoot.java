@@ -76,7 +76,7 @@ public class Shoot extends CommandBase {
     public void execute() {
         //If both triggers are pulled, motors run.
 
-        if (OI.rightJoystick.getTrigger()
+        if (!DriveTank.useWheel && OI.rightJoystick.getTrigger()
         || OI.rightJoystick.getRawButton(10))
         {
             double leftSpeed = motorControl.getSpeed(turret.getEncoderRate());

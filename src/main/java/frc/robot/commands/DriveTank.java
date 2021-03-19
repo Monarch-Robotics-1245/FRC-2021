@@ -25,7 +25,7 @@ public class DriveTank extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final Drivetrain drivetrain;
 
-    private boolean useWheel;
+    public static boolean useWheel;
     
     private MotorControlPID leftPID, rightPID;
 
@@ -62,65 +62,65 @@ public class DriveTank extends CommandBase {
             useWheel = !useWheel;
         }
 
-        if(!OI.rightJoystick.getTrigger() && !OI.leftJoystick.getTrigger()){
+        if(useWheel){
+            if(OI.rightJoystick.getTrigger()){
+                double leftEncoder = drivetrain.getLeftEncoder().getRate();
+                double rightEncoder = drivetrain.getRightEncoder().getRate();
+                double speed = OI.rightJoystick.getRawButton(3) ? fasterVelocity : targetVelocity;
+                double twist = (OI.rightJoystick.getX())*2;
+                double slowerSide = 1 - Math.abs(twist);
+                if(slowerSide>1){
+                    slowerSide = 1;
+                }
+                else if(slowerSide<-0.5){
+                    slowerSide = -0.5;
+                }
+                if(twist>0){
+                    leftPID.setTarget(speed);
+                    rightPID.setTarget(speed*slowerSide);
+                }
+                else{
+                    leftPID.setTarget(speed*slowerSide);
+                    rightPID.setTarget(speed);
+                }
+                double leftSpeed = leftPID.getSpeed(leftEncoder);
+                double rightSpeed = rightPID.getSpeed(rightEncoder);
+                drivetrain.tankDrive(leftSpeed, rightSpeed);
+            }
+            else{
+                leftPID.reset();
+                rightPID.reset();
+                drivetrain.tankDrive(0, 0);
+            }
+
+            // double leftSide, rightSide;
+            // double accel = OI.deadZone(OI.xboxController.getTriggerAxis(GenericHID.Hand.kRight), 0.05) - OI.deadZone(OI.xboxController.getTriggerAxis(GenericHID.Hand.kLeft), 0.05);
+            // // double accel = -OI.deadZone(OI.wheel.getY(), 0.05);
+            // double twist = (OI.wheel.getX())*2;
+            // leftSide = accel;
+            // rightSide = accel;
+            // double slowerSide = 1 - Math.abs(twist);
+            // if(slowerSide>1){
+            //     slowerSide = 1;
+            // }
+            // else if(slowerSide<-0.5){
+            //     slowerSide = -0.5;
+            // }
+            // if(twist>0){
+            //     rightSide *= slowerSide;
+            // }
+            // else{
+            //     leftSide *= slowerSide;
+            // }
+            // drivetrain.tankDrive(leftSide, rightSide);
+        }
+        else if(!OI.rightJoystick.getTrigger() && !OI.leftJoystick.getTrigger()){
             if(Robot.isSimulation()){
                 drivetrain.tankDrive(
                     -OI.deadZone(OI.xboxController.getY(GenericHID.Hand.kLeft), Constants.getDeadZone()), 
                     -OI.deadZone(OI.xboxController.getY(GenericHID.Hand.kRight), Constants.getDeadZone())
                     );
-            }
-            else if(useWheel){
-                if(OI.rightJoystick.getTrigger()){
-                    double leftEncoder = drivetrain.getLeftEncoder().getRate();
-                    double rightEncoder = drivetrain.getRightEncoder().getRate();
-                    double speed = OI.rightJoystick.getRawButton(3) ? fasterVelocity : targetVelocity;
-                    double twist = (OI.rightJoystick.getX())*2;
-                    double slowerSide = 1 - Math.abs(twist);
-                    if(slowerSide>1){
-                        slowerSide = 1;
-                    }
-                    else if(slowerSide<-0.5){
-                        slowerSide = -0.5;
-                    }
-                    if(twist>0){
-                        leftPID.setTarget(speed);
-                        rightPID.setTarget(speed*slowerSide);
-                    }
-                    else{
-                        leftPID.setTarget(speed*slowerSide);
-                        rightPID.setTarget(speed);
-                    }
-                    double leftSpeed = leftPID.getSpeed(leftEncoder);
-                    double rightSpeed = rightPID.getSpeed(rightEncoder);
-                    drivetrain.tankDrive(leftSpeed, rightSpeed);
-                }
-                else{
-                    leftPID.reset();
-                    rightPID.reset();
-                    drivetrain.tankDrive(0, 0);
-                }
-
-                // double leftSide, rightSide;
-                // double accel = OI.deadZone(OI.xboxController.getTriggerAxis(GenericHID.Hand.kRight), 0.05) - OI.deadZone(OI.xboxController.getTriggerAxis(GenericHID.Hand.kLeft), 0.05);
-                // // double accel = -OI.deadZone(OI.wheel.getY(), 0.05);
-                // double twist = (OI.wheel.getX())*2;
-                // leftSide = accel;
-                // rightSide = accel;
-                // double slowerSide = 1 - Math.abs(twist);
-                // if(slowerSide>1){
-                //     slowerSide = 1;
-                // }
-                // else if(slowerSide<-0.5){
-                //     slowerSide = -0.5;
-                // }
-                // if(twist>0){
-                //     rightSide *= slowerSide;
-                // }
-                // else{
-                //     leftSide *= slowerSide;
-                // }
-                // drivetrain.tankDrive(leftSide, rightSide);
-            }
+            } 
             else{
                 drivetrain.tankDrive(
                     -OI.deadZone(OI.leftJoystick.getY(), Constants.getDeadZone()), 
