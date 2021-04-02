@@ -286,7 +286,7 @@ if __name__ == "__main__":
 
         # inside:
         if camera_index == 0:
-            binary_img = cv2.inRange(hsv_img, (0, 0, 0), (255, 94, 255)) 
+            binary_img = cv2.inRange(hsv_img, (0, 85, 45), (75, 255, 255)) 
            # binary_img = cv2.inRange(hsv_img, (65, 65, 100), (85, 255, 255))
         elif (camera_index == 1 or camera_index == 2):
             binary_img = cv2.inRange(hsv_img, (20, 160, 70), (43, 255, 255))
@@ -312,7 +312,7 @@ if __name__ == "__main__":
             # Ignore small contours that could be because of noise/bad thresholding
             if area < 50 or (area<150 and camera_index==2):
                 continue
-            elif camera_index == 0 and ((area > 100000)):
+            elif camera_index == 0 and ((not 0.5 < circularity < 1.5) or (area > 100000)):
                 continue
             # elif camera_index == 0 and ((not (0.8 < circularity < 1.5) or area > 10000)):
             #     continue
