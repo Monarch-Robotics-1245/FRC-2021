@@ -76,13 +76,13 @@ public class Shoot extends CommandBase {
     public void execute() {
         //If both triggers are pulled, motors run.
 
-        if (!DriveTank.useWheel && OI.rightJoystick.getTrigger()
+        if (OI.rightJoystick.getTrigger()
         || OI.rightJoystick.getRawButton(10))
         {
             double leftSpeed = motorControl.getSpeed(turret.getEncoderRate());
             turret.spinMotors(leftSpeed,leftSpeed);
             if((OI.rightJoystick.getRawButton(5) || OI.xboxController.getAButton())/* && Math.abs(turret.getEncoderRate()-targetSpinSpeedAuto)<1.5*/){
-                turret.getInputWheelMotor().set(ControlMode.PercentOutput,1.0);
+                turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.95);
             }
             else {
                 turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.0); 
@@ -96,7 +96,7 @@ public class Shoot extends CommandBase {
 
             // turret.getInputWheelMotor().set(ControlMode.PercentOutput, 0.0);
             if((OI.rightJoystick.getRawButton(5) || OI.xboxController.getAButton())/* && Math.abs(turret.getEncoderRate()-targetSpinSpeedAuto)<1.5*/){
-                turret.getInputWheelMotor().set(ControlMode.PercentOutput,1.0);
+                turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.95);
             }
             else {
                 turret.getInputWheelMotor().set(ControlMode.PercentOutput,0.0); 

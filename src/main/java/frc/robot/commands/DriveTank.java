@@ -118,10 +118,11 @@ public class DriveTank extends CommandBase {
             double leftSide, rightSide;
             // double accel = 0;
             double accel = -OI.deadZone(OI.rightJoystick.getY(), 0.05);            // double accel = -OI.deadZone(OI.wheel.getY(), 0.05);
-            if(OI.rightJoystick.getTrigger()){
-                accel = 0.75;
-            }
-            double twist = OI.deadZone(OI.rightJoystick.getX(),0.05);
+            // if(OI.rightJoystick.getTrigger()){
+            //     accel = 0.75;
+            // }
+            // double twist = OI.deadZone(OI.rightJoystick.getX(),0.05);
+            double twist = 0;
             leftSide = accel;
             rightSide = accel;
             double slowerSide = 1 - Math.abs(twist) * 1.5;
