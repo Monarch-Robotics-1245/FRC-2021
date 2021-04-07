@@ -139,7 +139,8 @@ public class DriveTank extends CommandBase {
             }
             drivetrain.tankDrive(leftSide, rightSide);
         }
-        else if(!OI.rightJoystick.getTrigger() && !OI.leftJoystick.getTrigger()){
+        // else if(!OI.rightJoystick.getTrigger() && !OI.leftJoystick.getTrigger()){
+        else {
             if(Robot.isSimulation()){
                 drivetrain.tankDrive(
                     -OI.deadZone(OI.xboxController.getY(GenericHID.Hand.kLeft), Constants.getDeadZone()), 
